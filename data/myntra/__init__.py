@@ -10,6 +10,7 @@ class MyntraProductsData(Iterator[Any]):
     def __post_init__(self):
         filepath = os.path.join(os.path.dirname(__file__), "data.csv")
         self.df = pd.read_csv(filepath)
+        self.df.fillna(value="", inplace=True)  # replace NaN with empty string
         self._iter = iter(self.df[["ProductName", "Description"]].to_dict(orient="records"))  # convert to dict for easy iteration)
 
     def __iter__(self):

@@ -8,10 +8,11 @@ from ornaz import OrnazProductsData
 class Data:
     def __init__(self):
         self.data_sources:List[Iterable] = [
-            KafkaData(),
-            FAQData(), 
+            # KafkaData(),
+            # FAQData(), 
             MyntraProductsData(),
-            OrnazProductsData()
+            # OrnazProductsData(),
+            []
         ]
 
     def __iter__(self) -> Iterable[str]:
