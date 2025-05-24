@@ -16,5 +16,5 @@ class OrnazProductsData(Iterator[Any]):
         return self
 
     def __next__(self):
-        item = next(self._iter)  # raises StopIteration when done
+        item = self.data[next(self._iter)]["data"]  # raises StopIteration when done
         return {"title": item["url"], "description": item["pdp_url"].replace("/", " ").replace("-", " ")}
