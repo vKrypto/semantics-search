@@ -17,4 +17,4 @@ class KafkaData(Iterator[Any]):
 
     def __next__(self):
         item = next(self._iter)  # raises StopIteration when done
-        return {"question": item, "answer": item}
+        return {"title": item, "description": item}
