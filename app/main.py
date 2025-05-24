@@ -1,8 +1,12 @@
+import os
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch(
-    "https://localhost:9200",
-    basic_auth=("elastic","YOUR_ES_PASSWORD"),
-    ca_certs="/.../elasticsearch-<version>/config/certs/http_ca.crt"
-)
-es.ping()
+
+es = Elasticsearch("http://localhost:9200")
+
+try:
+    info = es.info()
+    print("Connected to Elasticsearch:", info["version"]["number"])
+except Exception as e:
+    print("Failed:", e)
+    os.exit(1)
