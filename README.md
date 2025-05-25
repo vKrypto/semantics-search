@@ -77,7 +77,8 @@
 <h3>Usage</h3>
 <p>Run the project with:</p>
 <p><strong>Using <a href="https://pypi.org/project/pip/">pip</a>:</strong></p>
-<pre><code class="language-sh">python {entrypoint}
+<pre><code class="language-sh">docker stack deploy -c docker-stack.yml elasticsearch
+python src/app.py
 </code></pre>
 <h3>Testing</h3>
 <p>Semantics-search-chatbot uses the {<strong>test_framework</strong>} test framework. Run the test suite with:</p>
