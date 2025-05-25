@@ -12,7 +12,7 @@ np.float_ = np.float64
 
 
 class DFDataEncoder:
-    dump_file_name = "data.parquet"
+    dump_file_name = "test_data.parquet"
     dump_file_name = os.path.join(os.path.dirname(__file__), dump_file_name)
     df = None
 
@@ -27,8 +27,13 @@ class DFDataEncoder:
     @staticmethod
     @timeit
     def _encode_data_from_df(df: pd.DataFrame, model: SentenceTransformer) -> pd.DataFrame:
+        def normalize(vec):
+            vec = np.array(vec)
+            return (vec / np.linalg.norm(vec)).tolist()
+
         print("Creating Embding: ", len(df))
-        df["description_vectors"] = df["description"].apply(lambda x: model.encode(x).astype(float).tolist())
+        # df["title_vectors"] = df["title"].apply(lambda x: model.encode(x).astype(float).tolist())
+        df["title_vectors"] = df["title"].apply(lambda x: normalize(model.encode(x)))
         return df
 
     @timeit

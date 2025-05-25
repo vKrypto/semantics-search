@@ -62,6 +62,7 @@ class ElasticsearchConnector:
             except Exception as e:
                 pass
             print("Bulk insert error:", str(e))
+        return
 
     def reset_index(self) -> None:
         if self.conn.indices.exists(index=self.index_name):

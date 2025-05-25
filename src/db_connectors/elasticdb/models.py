@@ -4,7 +4,7 @@ INDEX_MAPPINGS = {
             "id": {"type": "long"},
             "title": {"type": "text"},
             "description": {"type": "text"},
-            "description_vectors": {
+            "title_vectors": {
                 "type": "dense_vector",
                 "dims": 768,
                 "index": True,
@@ -17,7 +17,7 @@ INDEX_MAPPINGS = {
             "id": {"type": "long"},
             "title": {"type": "text"},
             "description": {"type": "text"},
-            "description_vectors": {
+            "title_vectors": {
                 "type": "dense_vector",
                 "dims": 768,
                 "index": True,
