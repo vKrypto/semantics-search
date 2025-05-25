@@ -5,7 +5,7 @@ from encoder import DFDataEncoder
 
 
 # model = SentenceTransformer("all-MiniLM-L6-v2")
-model = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
+TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
 print("Model loaded successfully!")
 
 
@@ -20,13 +20,13 @@ class Indexer:
 
 
 def re_indexing():
-    obj = DFDataEncoder(model=model, fresh=False)
+    obj = DFDataEncoder(model=TRANSFORMER_MODEL, fresh=False)
     Indexer.update_index_store(obj.get_records())
 
 
 def search_query(query):
     es = ElasticsearchConnector()
-    query_vector = [float(i) for i in model.encode(query.lower())]
+    query_vector = [float(i) for i in TRANSFORMER_MODEL.encode(query.lower())]
     # perform search
     search_query = {
         "knn": {
