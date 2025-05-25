@@ -27,19 +27,19 @@ def search_query(query: str, top_k: int = 5) -> list:
     return res["hits"]["hits"]
 
 
-def search_query_using_script_score(query: str):
+def search_query_using_script_score(query: str, top_k: int = 5):
     query_vector = [float(i) for i in TRANSFORMER_MODEL.encode(query.lower())]
-    print(len(query_vector))
     search_query = {
         "query": {
             "script_score": {
                 "query": {"match_all": {}},
                 "script": {
-                    "source": "cosineSimilarity(params.query_vector, doc['description_vectors'])",
+                    "source": "1 + cosineSimilarity(params.query_vector, 'description_vectors')",
                     "params": {"query_vector": query_vector},
                 },
             }
         },
+        "size": top_k,
         "_source": ["title", "description"],
     }
 
@@ -54,12 +54,11 @@ from pprint import pprint
 # re_indexing()
 
 
-res = search_query("Brown", top_k=2)
-for i in res:
-    pprint(i)
-print("-----------------------------")
+# res = search_query("Brown", top_k=2)
+# for i in res:
+#     pprint(i)
+# print("-----------------------------")
 
 res = search_query_using_script_score("Brown")
-print(res)
 for i in res:
     pprint(i)
