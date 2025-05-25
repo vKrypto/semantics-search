@@ -1,7 +1,7 @@
-from db_connectors import ElasticsearchConnector
-from utils import timeit
 from sentence_transformers import SentenceTransformer
-from encoder import DFDataEncoder
+
+from db_connectors import ElasticsearchConnector
+from utils import timeit, DFDataEncoder
 
 
 # model = SentenceTransformer("all-MiniLM-L6-v2")
