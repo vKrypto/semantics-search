@@ -3,4 +3,8 @@ __pycache__
 *.faiss
 *.npy
 venv
-data.parquet
+data.parquet\
+.tox*
+.vscode*
+.idea*
+.cursor*
