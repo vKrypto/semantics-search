@@ -1,27 +1,14 @@
 from sentence_transformers import SentenceTransformer
 
 from db_connectors import ElasticsearchConnector
-from utils import timeit, DFDataEncoder
-
+from utils import DataIndexer, timeit
 
 # model = SentenceTransformer("all-MiniLM-L6-v2")
 TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
 print("Model loaded successfully!")
 
 
-class Indexer:
-    @timeit
-    def update_index_store(records: list):
-        print("Storing documents in Elasticsearch: ", len(records))
-        es = ElasticsearchConnector()
-        es.reset_index()
-        es.add_bulk_documents(records)
-        print(f"Re-indexing done!, total indexed documents: {es.count()}")
-
-
-def re_indexing():
-    obj = DFDataEncoder(model=TRANSFORMER_MODEL, fresh=False)
-    Indexer.update_index_store(obj.get_records())
+DataIndexer.re_indexing(model=TRANSFORMER_MODEL, refresh=False)  # Re-index the data after the model is loaded
 
 
 def search_query(query):
@@ -38,9 +25,9 @@ def search_query(query):
         "_source": ["title"],
     }
 
-    res = es.conn.search(index=es.index.NAME, body=search_query)
+    res = es.conn.search(index=es.index_name, body=search_query)
     print(f"{query=}: {res=}")
 
 
-re_indexing()
+# re_indexing()
 # search_query("Brown")

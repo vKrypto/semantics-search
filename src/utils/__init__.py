@@ -1,6 +1,9 @@
 import time
 from functools import wraps
+
 from .encoder import DFDataEncoder
+from .indexer import DataIndexer
+
 
 def timeit(func):
     @wraps(func)
@@ -14,4 +17,4 @@ def timeit(func):
     return wrapper
 
 
-__all__ = ["timeit", "DFDataEncoder"]
+__all__ = ["timeit", "DFDataEncoder", "DataIndexer"]
