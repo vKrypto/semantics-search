@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            const resultsDiv = document.getElementById('results');
+            const loadingDiv = document.getElementById('loading');
+            const timingDiv = document.getElementById('timing');
+
+            if (!query.trim()) {
+                return;
+            }
+
+            // Show loading state
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.innerHTML = '';
+            timingDiv.innerHTML = '';
+
+            const startTime = performance.now();
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                const totalTime = Math.round(performance.now() - startTime);
+
+                // Display timing information
+                timingDiv.innerHTML = `
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="font-semibold">Server Processing Time:</span>
+                                <span class="text-blue-600">${data.server_time} ms</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">Total Response Time:</span>
+                                <span class="text-blue-600">${totalTime} ms</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                resultsDiv.innerHTML = data.results.map(result => `
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-4 hover:shadow-lg transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-xl font-semibold text-gray-800 mb-2">${result.title}</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Score: ${result.score}</span>
+                        </div>
+                        <p class="text-gray-600">${result.description}</p>
+                    </div>
+                `).join('');
+
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="text-center text-gray-600 mt-8">
+                            No results found for your search.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="text-center text-red-600 mt-8">
+                        An error occurred while searching. Please try again.
+                    </div>
+                `;
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Semantic Search</h1>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="flex gap-4">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Enter your search query..."
+                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onkeypress="if(event.key === 'Enter') performSearch()"
+                    >
+                    <button
+                        onclick="performSearch()"
+                        class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading indicator -->
+            <div id="loading" class="hidden">
+                <div class="flex justify-center items-center mb-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+            </div>
+
+            <!-- Timing information -->
+            <div id="timing"></div>
+
+            <!-- Results container -->
+            <div id="results"></div>
+        </div>
+    </div>
+</body>
+</html>
