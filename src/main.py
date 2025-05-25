@@ -9,9 +9,8 @@ INDEX_NAME = "cosine_indexes"
 # model = SentenceTransformer("all-MiniLM-L6-v2")
 TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
 print("Model loaded successfully!")
-DataIndexer.re_indexing(
-    index_name=INDEX_NAME, model=TRANSFORMER_MODEL, refresh=False
-)  # Re-index the data after the model is loaded
+# Re-index the data after the model is loaded
+DataIndexer.re_indexing(index_name=INDEX_NAME, model=TRANSFORMER_MODEL, refresh=False)
 print("Re-indexing done!")
 
 
