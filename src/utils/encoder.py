@@ -33,7 +33,7 @@ class DFDataEncoder:
 
         print("Creating Embding: ", len(df))
         # df["title_vectors"] = df["title"].apply(lambda x: model.encode(x).astype(float).tolist())
-        df["title_vectors"] = df["title"].apply(lambda x: normalize(model.encode(x)))
+        df["title_vectors"] = df["title"].apply(lambda x: normalize(model.encode(x)))  # --> [-1, 1]
         return df
 
     @timeit
