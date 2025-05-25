@@ -1,10 +1,13 @@
-from typing import Iterable, Dict
-from .kafka import KafkaData
+from typing import Dict, Iterable
+
+import pandas as pd
+
+from utils import timeit
+
 from .faq import FAQData
+from .kafka import KafkaData
 from .myntra import MyntraProductsData
 from .ornaz import OrnazProductsData
-import pandas as pd
-from utils import timeit
 
 
 class DataStream:
@@ -22,9 +25,10 @@ class DataStream:
             for item in data_source:
                 source_data_index += 1
                 _id = "%0*d" % (6, source_data_index)
-                val = {k: v.lower() for k, v in item.items()}
-                val["id"] = int(source_index + _id)
-                yield val
+                data = {k: v.lower() for k, v in item.items()}
+                title = data.pop("title", "")
+                l_int_id = int(source_index + _id)
+                yield {"id": l_int_id, "title": title, "data": data}
 
 
 class DataStreamDF(DataStream):

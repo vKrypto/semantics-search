@@ -37,7 +37,7 @@ class CosineQuerySelector:
             },
             "size": self.top_k,
             "min_score": 1 + self.min_score,  # Only return documents with cosine similarity > 0.30
-            "_source": ["title", "description"],
+            "_source": ["title", "data"],
         }
 
     def __iter__(self) -> list:

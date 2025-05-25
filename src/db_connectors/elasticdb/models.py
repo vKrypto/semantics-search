@@ -3,7 +3,7 @@ INDEX_MAPPINGS = {
         "properties": {
             "id": {"type": "long"},
             "title": {"type": "text"},
-            "description": {"type": "text"},
+            "data": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
             "title_vectors": {
                 "type": "dense_vector",
                 "dims": 768,
@@ -16,7 +16,7 @@ INDEX_MAPPINGS = {
         "properties": {
             "id": {"type": "long"},
             "title": {"type": "text"},
-            "description": {"type": "text"},
+            "data": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
             "title_vectors": {
                 "type": "dense_vector",
                 "dims": 768,

@@ -4,11 +4,9 @@ from typing import Optional
 
 from fastapi import FastAPI, Query, Request
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sentence_transformers import SentenceTransformer
 
-from main import TRANSFORMER_MODEL, search_title
+from main import re_index, search_title
 
 app = FastAPI(title="Semantic Search API")
 
@@ -18,6 +16,9 @@ templates_path.mkdir(exist_ok=True)
 
 # Mount templates
 templates = Jinja2Templates(directory=str(templates_path))
+
+
+# re_index(refresh=False)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -38,7 +39,7 @@ async def search(q: Optional[str] = Query(None, alias="q")):
         formatted_results.append(
             {
                 "title": item.get("_source", {}).get("title", "No title"),
-                "description": item.get("_source", {}).get("description", "No description"),
+                "data": item.get("_source", {}).get("data", "{}"),
                 "score": round(item.get("_score", 0) - 1, 2),  #  converting to --> [-1, 1] scale again
             }
         )
