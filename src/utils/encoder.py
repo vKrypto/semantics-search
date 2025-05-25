@@ -12,7 +12,7 @@ np.float_ = np.float64
 
 
 class DFDataEncoder:
-    dump_file_name = "test_data.parquet"
+    dump_file_name = "all_data.parquet"
     dump_file_name = os.path.join(os.path.dirname(__file__), dump_file_name)
     df = None
 
