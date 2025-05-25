@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 from utils import timeit
-from data import DataStreamDF
+from data_streams import DataStreamDF
 from sentence_transformers import SentenceTransformer
+
 np.float_ = np.float64
 
 
@@ -12,7 +13,7 @@ class DFDataEncoder:
     df = None
 
     def __init__(self, fresh: bool, model: SentenceTransformer):
-        if not(fresh and os.path.exists(self.dump_file_name)):
+        if not (fresh and os.path.exists(self.dump_file_name)):
             self.df = pd.read_parquet(self.dump_file_name)
         else:
             df = DataStreamDF().get_clean_data()
@@ -21,14 +22,14 @@ class DFDataEncoder:
 
     @staticmethod
     @timeit
-    def _encode_data_from_df(df:pd.DataFrame, model:SentenceTransformer) -> pd.DataFrame:
+    def _encode_data_from_df(df: pd.DataFrame, model: SentenceTransformer) -> pd.DataFrame:
         print("Creating Embding: ", len(df))
-        df['description_vectors'] = df['description'].apply(lambda x: model.encode(x).astype(float).tolist())
+        df["description_vectors"] = df["description"].apply(lambda x: model.encode(x).astype(float).tolist())
         return df
-    
+
     @timeit
     def _create_dump(self):
         self.df.to_parquet(self.dump_file_name)
 
-    def get_records(self)-> list:
-        return self.df.to_dict(orient='records')
+    def get_records(self) -> list:
+        return self.df.to_dict(orient="records")

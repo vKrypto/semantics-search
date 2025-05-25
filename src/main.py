@@ -9,15 +9,14 @@ model = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
 print("Model loaded successfully!")
 
 
-class Indexer:    
+class Indexer:
     @timeit
-    def update_index_store(records:list):
+    def update_index_store(records: list):
         print("Storing documents in Elasticsearch: ", len(records))
         es = ElasticsearchConnector()
         es.reset_index()
         es.add_bulk_documents(records)
-        print(f"Re-indexing done!, total indexed documents: {es.count()}" )
-
+        print(f"Re-indexing done!, total indexed documents: {es.count()}")
 
 
 def re_indexing():
@@ -34,14 +33,13 @@ def search_query(query):
             "field": "description_vectors",
             "query_vector": query_vector,
             "k": 2,
-            "num_candidates": 500
+            "num_candidates": 500,
         },
-        "_source": ["title"]
+        "_source": ["title"],
     }
 
     res = es.conn.search(index=es.index.NAME, body=search_query)
     print(f"{query=}: {res=}")
-
 
 
 re_indexing()

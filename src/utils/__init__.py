@@ -10,7 +10,8 @@ def timeit(func):
         end = time.perf_counter()
         print(f"{func.__name__} executed in {end - start:.6f} seconds")
         return result
+
     return wrapper
 
 
-__all__ = ['timeit']
+__all__ = ["timeit"]
