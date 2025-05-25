@@ -21,3 +21,10 @@ Make sure the [`docker-stack.yml`](./../docker-stack.yml) file is present in the
 docker stack deploy -c docker-stack.yml elasticsearch  # to create service
 ```
 
+
+## setup Project:
+```bash
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+pre-commit install
+```
