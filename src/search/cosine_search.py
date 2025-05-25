@@ -5,6 +5,8 @@ from db_connectors import ElasticsearchConnector
 
 
 class CosineQuerySelector:
+    _es_connector = None  # type: ElasticsearchConnector
+
     def __init__(
         self, model: SentenceTransformer, index_name: str, query: str, top_k: int = 1, min_score: float = 0.30
     ) -> None:
@@ -13,7 +15,8 @@ class CosineQuerySelector:
         self.top_k = top_k
         self.min_score = min_score
         self.query_vector = self._normalize(model.encode(query.lower()))
-        self._es_connector = ElasticsearchConnector(index_name=self.index_name)
+        if CosineQuerySelector._es_connector is None:  # Check if ElasticsearchConnector is already initialized
+            CosineQuerySelector._es_connector = ElasticsearchConnector(index_name=self.index_name)
 
     @staticmethod
     def _normalize(vec):
