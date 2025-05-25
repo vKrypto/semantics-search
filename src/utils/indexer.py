@@ -6,14 +6,14 @@ class DataIndexer:
 
     @staticmethod
     @timeit
-    def update_index_store(records: list):
+    def update_index_store(index_name: str, records: list):
         print("Storing documents in Elasticsearch: ", len(records))
-        es = ElasticsearchConnector()
+        es = ElasticsearchConnector(index_name=index_name)
         es.reset_index()
         es.add_bulk_documents(records)
         print(f"Re-indexing done!, total indexed documents: {es.count()}")
 
     @classmethod
-    def re_indexing(cls, model, refresh=False):
-        obj = DFDataEncoder(model=model, fresh=refresh)
-        cls.update_index_store(obj.get_records())
+    def re_indexing(cls, model, index_name: str, refresh=False):
+        obj = DFDataEncoder(model=model, refresh=refresh)
+        cls.update_index_store(index_name, obj.get_records())

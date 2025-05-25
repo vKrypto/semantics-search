@@ -1,31 +1,22 @@
 from typing import Dict, Iterable
 
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
+from elasticsearch.helpers import BulkIndexError, bulk
 
 from .models import INDEX_MAPPINGS
-
-
-class BaseIndex:
-    NAME: str = ...
-    MAPPING: dict = ...
-
-
-class DefaultIndex(BaseIndex):
-    NAME: str = "test_indexes"
-    MAPPING: dict = INDEX_MAPPINGS[NAME]
 
 
 class ElasticsearchConnector:
     URL = "http://localhost:9200"
     _conn = None
+    index_name = ...
+    index_mapping = ...
 
-    def __init__(self, index: BaseIndex = None):
-        self.index = index or DefaultIndex
-
-    @property
-    def index_name(self) -> str:
-        return self.index.NAME
+    def __init__(self, index_name: str) -> None:
+        self.index_name = index_name
+        if index_name not in INDEX_MAPPINGS:
+            raise ValueError(f"Invalid index name: {index_name}, available options: {list(INDEX_MAPPINGS.keys())}!")
+        self.index_mapping = INDEX_MAPPINGS[index_name]
 
     @property
     def conn(self) -> Elasticsearch:
@@ -44,7 +35,7 @@ class ElasticsearchConnector:
 
     def _create_index(self):
         if not self.conn.indices.exists(index=self.index_name):
-            self.conn.indices.create(index=self.index_name, mappings=self.index.MAPPING)
+            self.conn.indices.create(index=self.index_name, mappings=self.index_mapping)
             print(f"Index '{self.index_name}' created")
 
     def add_documents(self, documents: Iterable[Dict]) -> None:
@@ -64,7 +55,12 @@ class ElasticsearchConnector:
         try:
             success, failed = bulk(self.conn, actions)
             print(f"Bulk insert completed: {success} succeeded")
-        except Exception as e:
+        except BulkIndexError as e:
+            try:
+                caused = e.errors[0]["index"]["error"]["caused_by"]
+                print(f"Bulk insert error: {caused['type']}: {caused['reason']}")
+            except Exception as e:
+                pass
             print("Bulk insert error:", str(e))
 
     def reset_index(self) -> None:
