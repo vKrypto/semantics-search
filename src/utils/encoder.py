@@ -38,7 +38,8 @@ class DFDataEncoder:
 
     @timeit
     def _create_dump(self):
-        self.df.to_parquet(self.dump_file_name)
+        self.df.to_parquet(self.dump_file_name, compression="brotli")
+        print("Dumping Data to Parquet: ", self.dump_file_name)
 
     def get_records(self) -> list:
         return self.df.to_dict(orient="records")
