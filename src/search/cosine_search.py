@@ -9,7 +9,7 @@ class CosineQuerySelector:
 
     def __init__(
         self, model: SentenceTransformer, index_name: str, query: str, top_k: int = 1, min_score: float = 0.30
-    ) -> None:
+    ):
         self.index_name = index_name
         self.query_str = query
         self.top_k = top_k
