@@ -38,28 +38,32 @@ class EuclideanQuerySelector:
             },
             "size": self.top_k,
             "_source": ["title", "data"],
-            "rescore": {
-                "window_size": self.rerank_window,
-                "query": {
-                    "rescore_query": {
-                        "script_score": {
-                            "script": {
-                                "source": """
-                                    double dist = 0;
-                                    for (int i = 0; i < params.query_vector.length; ++i) {
-                                        double diff = params.query_vector[i] - doc['title_vectors'][i];
-                                        dist += diff * diff;
+            "rescore": [
+                {
+                    "window_size": self.rerank_window,
+                    "query": {
+                        "rescore_query": {
+                            "function_score": {
+                                "script_score": {
+                                    "script": {
+                                        "source": """
+                                            double dist = 0;
+                                            for (int i = 0; i < params.query_vector.length; ++i) {
+                                                double diff = params.query_vector[i] - doc['title_vectors'][i];
+                                                dist += diff * diff;
+                                            }
+                                            return -Math.sqrt(dist);
+                                        """,
+                                        "params": {"query_vector": self.query_vector},
                                     }
-                                    return -Math.sqrt(dist);  // Lower distance = higher score
-                                """,
-                                "params": {"query_vector": self.query_vector},
+                                }
                             }
-                        }
+                        },
+                        "query_weight": 0.0,
+                        "rescore_query_weight": 1.0,
                     },
-                    "query_weight": 0.0,
-                    "rescore_query_weight": 1.0,
-                },
-            },
+                }
+            ],
         }
 
     def __iter__(self):

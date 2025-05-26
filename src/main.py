@@ -3,8 +3,8 @@ from sentence_transformers import SentenceTransformer
 from search import CosineQuerySelector, HybridQuerySelector, get_default_search_class
 from utils import DataIndexer
 
-# INDEX_NAME = "cosine_indexes"
-INDEX_NAME = "euclidian_indexes"
+INDEX_NAME = "cosine_indexes"
+# INDEX_NAME = "euclidian_indexes"
 # model = SentenceTransformer("all-MiniLM-L6-v2")
 TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=True)
 print("Model loaded successfully!")

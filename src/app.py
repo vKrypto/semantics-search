@@ -18,7 +18,7 @@ templates_path.mkdir(exist_ok=True)
 templates = Jinja2Templates(directory=str(templates_path))
 
 
-re_index(refresh=False)
+# re_index(refresh=False)
 
 
 @app.get("/", response_class=HTMLResponse)
