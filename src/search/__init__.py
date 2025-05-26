@@ -1,4 +1,13 @@
 from .cosine_search import CosineQuerySelector
-from .euladiansearch import EucladianQuerySelector
+from .euclidean_search import EuclideanQuerySelector
+from .hybrid_search import HybridQuerySelector
 
-__all__ = ["CosineQuerySelector", "EucladianQuerySelector"]
+
+def get_default_search_class(index_name: str) -> type:
+    if index_name == "euclidian_indexes":
+        return EuclideanQuerySelector
+    else:
+        return CosineQuerySelector
+
+
+__all__ = ["get_default_search_class", "CosineQuerySelector", "EuclideanQuerySelector", "HybridQuerySelector"]

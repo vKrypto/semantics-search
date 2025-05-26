@@ -15,5 +15,5 @@ class DataIndexer:
 
     @classmethod
     def re_indexing(cls, model, index_name: str, refresh=False):
-        obj = DFDataEncoder(model=model, refresh=refresh)
+        obj = DFDataEncoder(model=model, index_name=index_name, refresh=refresh)
         cls.update_index_store(index_name, obj.get_records())

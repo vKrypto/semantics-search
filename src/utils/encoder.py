@@ -12,17 +12,21 @@ np.float_ = np.float64
 
 
 class DFDataEncoder:
-    dump_file_name = "all_data.parquet"
-    dump_file_name = os.path.join(os.path.dirname(__file__), dump_file_name)
     df = None
 
-    def __init__(self, refresh: bool, model: SentenceTransformer):
+    def __init__(self, model: SentenceTransformer, index_name: str, refresh: bool = False):
+        self.index_name = index_name
         if not refresh and os.path.exists(self.dump_file_name):
             self.df = pd.read_parquet(self.dump_file_name)
         else:
             df = DataStreamDF().get_clean_data()
             self.df = self._encode_data_from_df(df, model=model)
             self._create_dump()
+
+    @property
+    def dump_file_name(self) -> str:
+        file_name = self.index_name + "_data.parquet"
+        return os.path.join(os.path.dirname(__file__), file_name)
 
     @staticmethod
     @timeit
