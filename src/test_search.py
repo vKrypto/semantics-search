@@ -1,4 +1,6 @@
-from llms import OllamaGenerator
+import requests
+
+from llms import OllamaRestAPIBasedGenerator
 from main import search_title
 
 q_map = {
@@ -16,28 +18,32 @@ q_map = {
     ]
 }
 
-for q, sep in q_map.items():
-    print(f"{q}:")
-    print("Possible resp:")
-    res = search_title(q)
-    tab = "\t"
-    print(f"Top 5 results for {q}:")
-    for i, r in enumerate(res):
-        score = r.get("_score", 0) - 1  #  converting to --> [-1, 1] scale again
-        r = r.get("_source", {})
-        print(tab, f"{i}. {r['title']}: Score: {score}")
+# for q, sep in q_map.items():
+#     print(f"{q}:")
+#     print("Possible resp:")
+#     res = search_title(q)
+#     tab = "\t"
+#     print(f"Top 5 results for {q}:")
+#     for i, r in enumerate(res):
+#         score = r.get("_score", 0) - 1  #  converting to --> [-1, 1] scale again
+#         r = r.get("_source", {})
+#         print(tab, f"{i}. {r['title']}: Score: {score}")
 
-    for i, s in enumerate(sep):
-        res = search_title(s)
-        print(tab, f"Top 5 results for {s}:")
-        res_text = ""
-        for i, r in enumerate(res):
-            score = r.get("_score", 0) - 1  #  converting to --> [-1, 1] scale again
-            r = r.get("_source", {})
-            print(tab, tab, f"{i}. {r['title']}: Score: {score}")
+#     for i, s in enumerate(sep):
+#         res = search_title(s)
+#         print(tab, f"Top 5 results for {s}:")
+#         for i, r in enumerate(res):
+#             score = r.get("_score", 0) - 1  #  converting to --> [-1, 1] scale again
+#             r = r.get("_source", {})
+#             print(tab, tab, f"{i}. {r['title']}: Score: {score}")
 
-    print(r)
+query = "I am getting multiple unusual messages how can I stop that?"
+context = "\n".join(
+    [f"Q: {item['_source']['title']}\nA: {item['_source']['data']['description']}" for item in search_title(query)]
+)
 
-    ollama = OllamaGenerator("deepseek-r1:32b", str(r))
-    print(ollama.get_response("1", "What impact does compressing messages have on Kafka's data throughput?"))
-    print()
+
+ollama = OllamaRestAPIBasedGenerator("llama3.2", context)
+print(ollama.get_response("Hi"))
+print(ollama.get_response(query))
+print(ollama.get_response("i have recieved 1000 dollar in bank account"))
