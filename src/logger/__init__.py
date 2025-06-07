@@ -29,8 +29,8 @@ class LoggerRepo:
     def debug(self, message: str, stacklevel: int = 1):
         self._log(logging.DEBUG, message, stacklevel=stacklevel + 1)
 
-    def _log(self, level: int, message: str, stacklevel: str = 1):
-        self.logger.log(level=level, msg=message, stacklevel=stacklevel + 1, exc_info=True)
+    def _log(self, level: int, message: str, stacklevel: str = 1, exc_info: bool = False):
+        self.logger.log(level=level, msg=message, stacklevel=stacklevel + 1, exc_info=exc_info)
 
 
 __all__ = ["LoggerRepo"]
