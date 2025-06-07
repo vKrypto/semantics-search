@@ -47,7 +47,7 @@ class OllamaRestAPIBasedGenerator:
         response = requests.post(
             "http://localhost:11434/api/generate",
             json={"model": "llama3.2", "prompt": prompt, "stream": False, "context": context},
-            timeout=10,  # 30 seconds timeout
+            timeout=30,  # 30 seconds timeout
         )
         data = response.json()
         self._session_store.set(self.session_id, data["context"])
