@@ -1,8 +1,6 @@
 # Replace this later with redis-py
 import json
 
-import redis
-
 from ._interface import ISessionStore
 
 

@@ -88,6 +88,9 @@ uvicorn app:app --host 0.0.0.0 --port 8000 --lifespan on
 </code></pre>
 
 <hr>
+Navigate to <a href="localhost:8000/search">http://localhost:8000/search</a>
+<br/>
+<br/>
 <img src="./assets/semantics_search.png">
 <div align="left" class=""><a href="#top">⬆ Return</a></div>
 <hr></div>
