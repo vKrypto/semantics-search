@@ -1,5 +1,6 @@
 from db_connectors import ElasticsearchConnector
-from utils import DFDataEncoder, timeit
+
+from .encoder import DFDataEncoder, timeit
 
 
 class DataIndexer:

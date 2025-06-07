@@ -8,6 +8,7 @@ from data_streams import DataStreamDF
 
 from .common import timeit
 
+# temp fix
 np.float_ = np.float64
 
 
@@ -25,12 +26,24 @@ class DFDataEncoder:
 
     @property
     def dump_file_name(self) -> str:
+        """
+        Get the dump file name
+        Returns:
+            str: The dump file name
+        """
         file_name = self.index_name + "_data.parquet"
         return os.path.join(os.path.dirname(__file__), file_name)
 
     @staticmethod
     @timeit
     def _encode_data_from_df(df: pd.DataFrame, model: SentenceTransformer) -> pd.DataFrame:
+        """
+        Encode the data from the dataframe
+        Args:
+            df: The dataframe to encode
+            model: The model to use for encoding
+        """
+
         def normalize(vec):
             vec = np.array(vec)
             return (vec / np.linalg.norm(vec)).tolist()
