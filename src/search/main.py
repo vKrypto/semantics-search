@@ -1,5 +1,8 @@
 from typing import Iterable
 
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from sentence_transformers import SentenceTransformer
 
 from utils import DataIndexer
@@ -23,6 +26,10 @@ TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=Tr
 print("Model loaded successfully!")
 
 
+nltk.download("stopwords")
+STOP_WORDS = set(stopwords.words("english"))
+
+
 def remove_stop_words(text: str, language: str = "english") -> str:
     """
     Remove stop words from the query
@@ -32,10 +39,10 @@ def remove_stop_words(text: str, language: str = "english") -> str:
         A string of the query without stop words
     """
     text = text.lower()
-    stop_words = set(stopwords.words(language))
+    stop_words = STOP_WORDS if language == "english" else set(stopwords.words(language))
     word_tokens = word_tokenize(text)
     filtered = [w for w in word_tokens if w not in stop_words]
-    return filtered
+    return " ".join(filtered)
 
 
 def re_index(refresh: bool = False) -> None:
@@ -54,6 +61,7 @@ def search_title(query: str, raw_format: bool = False) -> Iterable[dict]:
         A list of results
     """
     query = query.lower().strip().replace("  ", " ")
+    query = remove_stop_words(query)
     QuerySelector_cls = get_default_search_class(INDEX_NAME)
     res = QuerySelector_cls(model=TRANSFORMER_MODEL, index_name=INDEX_NAME, query=query, min_score=0.33, top_k=4)
     for item in res:
@@ -74,6 +82,7 @@ def search_query_and_create_context(query: str) -> str:
     Returns:
         A string of the context
     """
+    query = remove_stop_words(query)
     res = search_title(query)
     return "\n".join([f"Q: {item['title']}\nA: {item['description']}" for item in res])
 
