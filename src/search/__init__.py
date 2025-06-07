@@ -1,13 +1,3 @@
-from .cosine_search import CosineQuerySelector
-from .euclidean_search import EuclideanQuerySelector
-from .hybrid_search import HybridQuerySelector
+from .main import search_query_and_create_context, search_title
 
-
-def get_default_search_class(index_name: str) -> type:
-    if index_name == "euclidian_indexes":
-        return EuclideanQuerySelector
-    else:
-        return CosineQuerySelector
-
-
-__all__ = ["get_default_search_class", "CosineQuerySelector", "EuclideanQuerySelector", "HybridQuerySelector"]
+__all__ = ["search_title", "search_query_and_create_context"]

@@ -24,10 +24,15 @@
             const startTime = performance.now();
 
             try {
-                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                // need to post api hit on the same url endpoint
+                const response = await fetch(`?q=${encodeURIComponent(query)}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ q: query }),
+                });
                 const data = await response.json();
 
                 const totalTime = Math.round(performance.now() - startTime);
+                console.log(data);
 
                 // Display timing information
                 timingDiv.innerHTML = `
@@ -47,7 +52,7 @@
 
                 resultsDiv.innerHTML = data.results.map(result => {
                     const title = result.title.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1));
-                    const prettyData = JSON.stringify(result.data, null, 2);
+                    const prettyData = JSON.stringify(result, null, 2);
                     return `
                         <div class="bg-white p-6 rounded-lg shadow-md mb-4 hover:shadow-lg transition-shadow">
                             <div class="flex justify-between items-start">

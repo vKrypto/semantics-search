@@ -1,7 +1,7 @@
 <div id="top" class="">
 
 <div align="center" class="text-center">
-<h1>SEMANTICS-SEARCH-CHATBOT</h1>
+<h1>SEMANTICS-SEARCH</h1>
 <p><em>Unlock Insightful Conversations with Intelligent Search Power</em></p>
 
 <img alt="last-commit" src="https://img.shields.io/github/last-commit/vKrypto/semantics-search-chatbot?style=flat&amp;logo=git&amp;logoColor=white&amp;color=0080ff" class="inline-block mx-1" style="margin: 0px 2px;">
@@ -86,6 +86,8 @@ uvicorn app:app --host 0.0.0.0 --port 8000 --lifespan on
 <p><strong>Using <a href="https://pypi.org/project/pip/">pip</a>:</strong></p>
 <pre><code class="language-sh">pytest
 </code></pre>
+
 <hr>
+<img src="./assets/semantics_search.png">
 <div align="left" class=""><a href="#top">⬆ Return</a></div>
 <hr></div>
