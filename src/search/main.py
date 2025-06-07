@@ -23,6 +23,21 @@ TRANSFORMER_MODEL = SentenceTransformer("all-mpnet-base-v2", local_files_only=Tr
 print("Model loaded successfully!")
 
 
+def remove_stop_words(text: str, language: str = "english") -> str:
+    """
+    Remove stop words from the query
+    Args:
+        query: The query to remove stop words from
+    Returns:
+        A string of the query without stop words
+    """
+    text = text.lower()
+    stop_words = set(stopwords.words(language))
+    word_tokens = word_tokenize(text)
+    filtered = [w for w in word_tokens if w not in stop_words]
+    return filtered
+
+
 def re_index(refresh: bool = False) -> None:
     # Re-index the data after the model is loaded
     DataIndexer.re_indexing(index_name=INDEX_NAME, model=TRANSFORMER_MODEL, refresh=refresh)
