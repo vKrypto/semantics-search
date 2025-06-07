@@ -42,17 +42,5 @@ async def search(q: Optional[str] = Query(None, alias="q")):
 
     start_time = time.time()
     results = search_title(q)
-
-    # Convert results to a more frontend-friendly format
-    formatted_results = []
-    for item in results:
-        formatted_results.append(
-            {
-                "title": item.get("_source", {}).get("title", "No title"),
-                "data": item.get("_source", {}).get("data", "{}"),
-                "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
-            }
-        )
-
     server_time = round((time.time() - start_time) * 1000, 2)  # Convert to milliseconds
-    return {"results": formatted_results, "server_time": server_time}  # Server processing time in milliseconds
+    return {"results": list(results), "server_time": server_time}  # Server processing time in milliseconds

@@ -47,14 +47,14 @@
 
                 resultsDiv.innerHTML = data.results.map(result => {
                     const title = result.title.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1));
-                    const prettyData = JSON.stringify(result.data, null, 2);
+                    const prettyData = JSON.stringify(result.description, null, 2);
                     return `
                         <div class="bg-white p-6 rounded-lg shadow-md mb-4 hover:shadow-lg transition-shadow">
                             <div class="flex justify-between items-start">
                                 <h2 class="text-xl font-semibold text-gray-800 mb-2">${title}</h2>
                                 <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Score: ${result.score}</span>
                             </div>
-                            <div class="overflow-auto break-words whitespace-pre-wrap bg-gray-100 p-3 rounded text-sm text-gray-700"><code>${prettyData}</code></div>
+                            <div class="overflow-auto break-words whitespace-pre-wrap bg-gray-100 p-3 rounded text-sm text-gray-700"><code>{'title': '${title}', 'description': ${prettyData}}</code></div>
                         </div>
                     `;
                 }).join('');

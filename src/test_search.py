@@ -1,7 +1,7 @@
 import requests
 
 from llms import OllamaRestAPIBasedGenerator
-from main import search_title
+from main import search_query_and_create_context, search_title
 
 q_map = {
     "How does message compression affect data flow in Kafka?": [
@@ -38,10 +38,7 @@ q_map = {
 #             print(tab, tab, f"{i}. {r['title']}: Score: {score}")
 
 query = "I am getting multiple unusual messages how can I stop that?"
-context = "\n".join(
-    [f"Q: {item['_source']['title']}\nA: {item['_source']['data']['description']}" for item in search_title(query)]
-)
-
+search_query_and_create_context(query)
 
 ollama = OllamaRestAPIBasedGenerator("llama3.2", context)
 print(ollama.get_response("Hi"))
