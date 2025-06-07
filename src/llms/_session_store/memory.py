@@ -15,6 +15,9 @@ class ChatSessionStore(ISessionStore):
     def get(self, session_id: str) -> List[Dict[str, str]]:
         return self._store[session_id]
 
+    def set(self, session_id: str, context: str):
+        self._store[session_id] = context
+
     def append(self, session_id: str, role: str, content: str):
         self._store[session_id].append({"role": role, "content": content})
 

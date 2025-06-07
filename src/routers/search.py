@@ -6,30 +6,22 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from main import search_title
+from search import search_title
 
 router = APIRouter(
-    prefix="",
+    prefix="/search",
     tags=["search"],
     responses={404: {"description": "Not found"}},
 )
-
 
 # Mount templates
 templates_path = Path(__file__).parent.parent / "templates"
 templates = Jinja2Templates(directory=str(templates_path))
 
 
-@router.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    """
-    Home page: serving frontend
-    """
-    return templates.TemplateResponse("search.html", {"request": request})
-
-
-@router.get("/search")
-async def search(q: Optional[str] = Query(None, alias="q")):
+@router.get("/")
+@router.post("/")
+async def chat(request: Request, q: Optional[str] = Query(None, alias="q")):
     """
     Search the title of the documents
     Args:
@@ -37,10 +29,14 @@ async def search(q: Optional[str] = Query(None, alias="q")):
     Returns:
         A dictionary containing the results and the server time
     """
+    # If no query or GET request without query, return the template
+    if request.method == "GET" and not q:
+        return templates.TemplateResponse("search.html", {"request": request})
+
     if not q:
         return {"results": [], "server_time": 0}
 
     start_time = time.time()
-    results = search_title(q)
+    response = search_title(q)
     server_time = round((time.time() - start_time) * 1000, 2)  # Convert to milliseconds
-    return {"results": list(results), "server_time": server_time}  # Server processing time in milliseconds
+    return {"results": response, "server_time": server_time}

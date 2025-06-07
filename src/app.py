@@ -2,7 +2,6 @@ import os
 
 # Add the src directory to Python path for imports
 import sys
-from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from src.routers.chat import router as chat_router
 from src.routers.search import router as search_router
 
 app = FastAPI(title="Semantic Search API")
@@ -28,6 +28,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Include routers
 app.include_router(search_router)
+app.include_router(chat_router)
+
 
 if __name__ == "__main__":
     import uvicorn
