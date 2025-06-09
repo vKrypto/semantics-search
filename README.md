@@ -92,5 +92,13 @@ Navigate to <a href="localhost:8000/search">http://localhost:8000/search</a>
 <br/>
 <br/>
 <img src="./assets/semantics_search.png">
+<hr/>
+
+<hr>
+Navigate to <a href="http://127.0.0.1:8000/static/index.html">http://127.0.0.1:8000/static/index.html</a>
+<br/>
+<br/>
+<img src="./assets/chat.png">
+<hr/>
 <div align="left" class=""><a href="#top">⬆ Return</a></div>
 <hr></div>
