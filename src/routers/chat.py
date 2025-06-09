@@ -6,7 +6,7 @@ from fastapi import APIRouter, Body, Query, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from llms import OllamaRestAPIBasedGenerator
+from llms import *
 from search import search_query_and_create_context
 
 router = APIRouter(
@@ -60,8 +60,10 @@ async def chat(request: Request, chat_request: ChatRequest = Body(...)):
     start_time = time.time()
     context = search_query_and_create_context(query)
     server_time = round((time.time() - start_time) * 1000, 2)  # Convert to milliseconds
-    ollama = OllamaRestAPIBasedGenerator("llama3.2", context, "user_session_id")
+    # llm = OllamaRestAPIBasedGenerator("llama3.2", context, "user_session_id")
+    # llm = GPTRestAPIBasedGenerator("gpt-4o-mini", context, "session_id")
+    llm = GPTGenerator("gpt-4o-mini", context, "session_id")
 
-    response = ollama.get_response(query)
+    response = llm.get_response(query)
     response["context_creation_time"] = server_time
     return response
