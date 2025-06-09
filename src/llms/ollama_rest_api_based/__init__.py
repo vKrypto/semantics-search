@@ -8,6 +8,10 @@ from .._session_store import DEFAULT_SESSION_STORE
 
 
 class OllamaRestAPIBasedGenerator:
+    """
+    connect with ollama but using rest api only.
+    """
+
     # base_url = "http://localhost:11434"
     _session_store = DEFAULT_SESSION_STORE()
 
