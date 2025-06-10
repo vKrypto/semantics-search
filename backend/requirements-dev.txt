@@ -8,6 +8,5 @@ mypy
 types-requests
 types-python-jose
 types-passlib
-types-python-multipart
 pre-commit
 tox
