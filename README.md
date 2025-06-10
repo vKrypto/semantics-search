@@ -71,13 +71,12 @@
 <p><strong>Install the dependencies:</strong></p>
 </li>
 </ol>
-<p><strong>Using <a href="https://pypi.org/project/pip/">pip</a>:</strong></p>
-<pre><code class="language-sh">❯ pip install -r requirements-dev.txt, requirements.txt
-</code></pre>
 <h3>Usage</h3>
 <p><strong>Run Backend</p>
 <pre><code class="language-sh">docker stack deploy -c docker-stack.yml elasticsearch
 cd backend
+pip install -r requirements-dev.txt
+pip install -r requirements.txt
 uvicorn app:app --host 0.0.0.0 --port 8000 --lifespan on
 </code></pre>
 <p><strong>Rebuild Frontend</p>
