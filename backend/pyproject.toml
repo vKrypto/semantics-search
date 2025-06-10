@@ -2,14 +2,42 @@
 requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "semantics-search-chatbot"
+version = "0.1.0"
+description = "A semantic search chatbot"
+requires-python = ">=3.8"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+dependencies = [
+    # Add your dependencies here
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+packages = [
+    "data_streams",
+    "db_connectors",
+    "llms",
+    "logger",
+    "routers",
+    "search",
+    "utils"
+]
+py-modules = ["app"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.yaml", "*.yml"]
+
 [tool.pytest.ini_options]
-testpaths = ["src"]
+testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v -s --strict-markers"
 
 [tool.black]
 line-length = 120
-include = 'src/.*\.pyi?$'
+include = '\.pyi?$'
 exclude = '''
 /(
     \.eggs
@@ -33,7 +61,7 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 120
-src_paths = ["src"]
+src_paths = ["."]
 
 [tool.flake8]
 max-line-length = 120
@@ -46,11 +74,11 @@ exclude = [
     ".eggs",
     "*.egg",
 ]
-filename = "src/**/*.py"
+filename = "**/*.py"
 
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py313
+envlist = py38,py39,py310
 isolated_build = True
 """
