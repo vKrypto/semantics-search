@@ -75,11 +75,15 @@
 <pre><code class="language-sh">❯ pip install -r requirements-dev.txt, requirements.txt
 </code></pre>
 <h3>Usage</h3>
-<p>Run the project with:</p>
-<p><strong>Using <a href="https://pypi.org/project/pip/">pip</a>:</strong></p>
+<p><strong>Run Backend</p>
 <pre><code class="language-sh">docker stack deploy -c docker-stack.yml elasticsearch
-cd src
+cd backend
 uvicorn app:app --host 0.0.0.0 --port 8000 --lifespan on
+</code></pre>
+<p><strong>Rebuild Frontend</p>
+<pre><code class="language-sh">cd frontend
+yarn
+yarn build
 </code></pre>
 <h3>Testing</h3>
 <p>Semantics-search-chatbot uses the {<strong>test_framework</strong>} test framework. Run the test suite with:</p>
@@ -98,7 +102,9 @@ Navigate to <a href="localhost:8000/search">http://localhost:8000/search</a>
 Navigate to <a href="http://127.0.0.1:8000/static/index.html">http://127.0.0.1:8000/static/index.html</a>
 <br/>
 <br/>
-<img src="./assets/chat.png">
+<img src="./assets/chat.png" height="300px">
+<img src="./assets/chat_2.png" height="300px">
+
 <hr/>
 <div align="left" class=""><a href="#top">⬆ Return</a></div>
 <hr></div>

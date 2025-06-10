@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chatbot Test/Any Website</title>
+</head>
+<body>
+  <h1>My Website</h1>
+
+  <!-- This is where the chatbot will be rendered -->
+  <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+  <!-- Include the built widget.js from your Vite `dist` folder -->
+  <script src="http://localhost:8000/static/dist/widget.js"></script>
+
+  <!-- Mount it after load -->
+  <script>
+    window.ChatbotWidget.mountChatbot("chatbot-container");
+  </script>
+</body>
+</html>
