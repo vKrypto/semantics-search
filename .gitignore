@@ -9,3 +9,5 @@ venv
 .cursor*
 *.egg-info
 *.parquet
+node_modules
+dist
