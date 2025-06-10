@@ -1,7 +1,7 @@
-pytest>=7.4.0
-black>=24.2.0
-isort>=5.13.2
-flake8>=7.0.0
-flake8-docstrings>=1.7.0
-pre-commit>=3.6.0
-tox>=4.13.0
+pytest
+black
+isort
+flake8
+flake8-docstrings
+pre-commit
+tox
