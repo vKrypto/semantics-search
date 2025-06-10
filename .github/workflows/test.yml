@@ -27,6 +27,7 @@ jobs:
         pip install tox tox-gh-actions
 
     - name: Test with tox
+      working-directory: ./backend
       run: tox
       env:
         TOXENV: py${{ matrix.python-version }}
