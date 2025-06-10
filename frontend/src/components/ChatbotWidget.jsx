@@ -2,9 +2,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input, List, Card } from "antd";
 import axios from "axios";
+import showdown from 'showdown';
 import '../chat.css'
 
 const { TextArea } = Input;
+
+// Create a Showdown converter instance
+const converter = new showdown.Converter({
+  tables: true,
+  tasklists: true,
+  strikethrough: true,
+  emoji: true
+});
+
+// Component to render markdown as HTML
+const MarkdownMessage = ({ text }) => {
+  const html = converter.makeHtml(text);
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+};
 
 const ChatbotWidget = () => {
   const [messages, setMessages] = useState([]);
@@ -50,7 +65,11 @@ const ChatbotWidget = () => {
           dataSource={messages}
           renderItem={(item) => (
             <List.Item className={`text-message ${item.from === 'user' ? 'user' : 'bot'}`}>
-              <div> {item.text} </div>
+              {item.from === 'user' ? (
+                <div>{item.text}</div>
+              ) : (
+                <MarkdownMessage text={item.text} />
+              )}
             </List.Item>
           )}
         />
