@@ -10,3 +10,13 @@ venv
 *.egg-info
 *.parquet
 node_modules
+.pytest_cache
+.coverage
+test-results.xml
+.coverage.xml
+.coverage.xml.gz
+.coverage.xml.gz.part
+.coverage.xml.gz.part.1
+.coverage.xml.gz.part.2
+.coverage.xml.gz.part.3
+.tox
