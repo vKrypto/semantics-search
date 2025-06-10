@@ -53,16 +53,3 @@ legacy_tox_ini = """
 [tox]
 envlist = py313
 isolated_build = True
-
-[testenv]
-deps =
-    pytest>=7.4.0
-    black>=24.2.0
-    isort>=5.13.2
-    flake8>=7.0.0
-commands =
-    black --check ./src
-    isort --check-only ./src
-    flake8 ./src
-    pytest {posargs:src}
-"""
