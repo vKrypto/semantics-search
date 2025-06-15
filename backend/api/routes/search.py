@@ -35,9 +35,6 @@ async def get_search_interface(request: Request):
 @router.post("/", response_model=SearchResponse)
 async def search(_: Request, q: str = Query(None, alias="q")) -> SearchResponse:
     search_service: SearchService = _get_search_service()
-    if q is not None:
-        search_request = SearchRequest(query=q)
-    else:
-        raise ValueError("Either request body or query parameter 'q' must be provided")
+    search_request = SearchRequest(query=q)
     logger.info(f"Received search request: {q}")
     return await search_service.search(search_request)
