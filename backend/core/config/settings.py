@@ -4,7 +4,9 @@ from typing import Optional
 from pydantic_settings import BaseSettings
 
 
-class Settings(BaseSettings):
+class AppSettingsClass(BaseSettings):
+    """Singleton settings class for the application."""
+
     # API Settings
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Semantic Search API"
@@ -16,7 +18,7 @@ class Settings(BaseSettings):
     DATABASE_URL: Optional[str] = None
 
     # LLM Settings
-    OPENAI_API_KEY: Optional[str] = None
+    OPENAI_APIKEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
     DEFAULT_LLM_PROVIDER: str = "openai"
 
@@ -29,6 +31,10 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
+# Create a single instance that will be used throughout the application
 @lru_cache()
-def get_settings() -> Settings:
-    return Settings()
+def get_settings() -> AppSettingsClass:
+    return AppSettingsClass()
+
+
+AppSettings = get_settings()

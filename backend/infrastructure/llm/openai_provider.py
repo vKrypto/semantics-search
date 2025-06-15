@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from openai import OpenAI
 
-from core.config.settings import get_settings
+from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.llm import LLMProvider
 
@@ -19,12 +19,11 @@ class OpenAIProvider(LLMProvider):
             model_name: The OpenAI model to use
             session_id: Optional session ID for conversation history
         """
-        settings = get_settings()
-        if not settings.OPENAI_API_KEY:
-            raise EnvironmentError("OPENAI_API_KEY not found in environment variables")
+        if not AppSettings.OPENAI_APIKEY:
+            raise EnvironmentError("OPENAI_APIKEY not found in environment variables")
 
         self.model_name = model_name
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.client = OpenAI(api_key=AppSettings.OPENAI_APIKEY)
         self.session_id = session_id or str(uuid.uuid4())
         self._conversation_history: List[Dict[str, str]] = []
         logger.info(f"Initialized OpenAI provider with model: {model_name}")

@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from application.services.search_service import SearchService
 from core.logging.logger import logger
 from domain.models.search import SearchRequest, SearchResponse
-from infrastructure.search import HybridSearchStrategy
+from infrastructure.search import SearchStrategyFactory
 
 router = APIRouter(
     prefix="/search",
@@ -22,7 +22,7 @@ templates = Jinja2Templates(directory=str(templates_path))
 
 async def get_search_service() -> SearchService:
     """Dependency to get search service instance."""
-    search_strategy = HybridSearchStrategy()
+    search_strategy = SearchStrategyFactory.create_strategy("cosine")
     return SearchService(search_strategy)
 
 

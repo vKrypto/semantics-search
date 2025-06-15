@@ -7,7 +7,7 @@ from application.services.chat_service import ChatService
 from core.logging.logger import logger
 from domain.models.chat import ChatRequest, ChatResponse
 from infrastructure.llm.factory import LLMFactory
-from infrastructure.search import HybridSearchStrategy
+from infrastructure.search import SearchStrategyFactory
 
 router = APIRouter(
     prefix="/chat",
@@ -23,7 +23,7 @@ templates = Jinja2Templates(directory=str(templates_path))
 async def get_chat_service() -> ChatService:
     """Dependency to get chat service instance."""
     llm_provider = LLMFactory.create_provider()
-    search_strategy = HybridSearchStrategy()
+    search_strategy = SearchStrategyFactory.create_strategy("cosine")
     return ChatService(llm_provider, search_strategy)
 
 

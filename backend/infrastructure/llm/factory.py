@@ -1,6 +1,6 @@
 from typing import Dict, Type
 
-from core.config.settings import get_settings
+from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.llm import LLMProvider
 
@@ -19,8 +19,7 @@ class LLMFactory:
     @classmethod
     def create_provider(cls, provider_name: str = None) -> LLMProvider:
         """Create an LLM provider instance."""
-        settings = get_settings()
-        provider_name = provider_name or settings.DEFAULT_LLM_PROVIDER
+        provider_name = provider_name or AppSettings.DEFAULT_LLM_PROVIDER
 
         if provider_name not in cls._providers:
             raise ValueError(f"Unknown LLM provider: {provider_name}")

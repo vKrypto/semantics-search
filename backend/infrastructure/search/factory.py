@@ -2,7 +2,7 @@ from typing import Dict, Type
 
 from sentence_transformers import SentenceTransformer
 
-from core.config.settings import get_settings
+from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.search import SearchStrategy
 
@@ -25,17 +25,11 @@ class SearchStrategyFactory:
     _model: SentenceTransformer = None
 
     @classmethod
-    def initialize(cls, model_name: str = None) -> None:
-        """Initialize the factory with a sentence transformer model.
-
-        Args:
-            model_name: Name of the sentence transformer model to use
-        """
+    def _initialize_model(cls) -> None:
+        """Initialize the sentence transformer model if not already initialized."""
         if cls._model is None:
-            settings = get_settings()
-            model_name = model_name or settings.EMBEDDING_MODEL
-            cls._model = SentenceTransformer(model_name)
-            logger.info(f"Initialized search factory with model: {model_name}")
+            logger.info(f"Initializing sentence transformer model: {AppSettings.EMBEDDING_MODEL}")
+            cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL)
 
     @classmethod
     def create_strategy(cls, strategy_name: str, **kwargs) -> SearchStrategy:
@@ -46,20 +40,18 @@ class SearchStrategyFactory:
             **kwargs: Additional arguments for the strategy
 
         Returns:
-            Search strategy instance
+            SearchStrategy instance
 
         Raises:
-            ValueError: If strategy_name is not recognized
+            ValueError: If strategy name is not recognized
         """
-        if cls._model is None:
-            cls.initialize()
-
         if strategy_name not in cls._strategies:
-            raise ValueError(f"Unknown search strategy: {strategy_name}")
+            raise ValueError(f"Unknown strategy: {strategy_name}")
 
+        cls._initialize_model()
         strategy_class = cls._strategies[strategy_name]
-        logger.info(f"Creating search strategy: {strategy_name}")
 
+        logger.info(f"Creating search strategy: {strategy_name}")
         return strategy_class(model=cls._model, **kwargs)
 
     @classmethod
@@ -76,8 +68,11 @@ class SearchStrategyFactory:
         """Register a new search strategy.
 
         Args:
-            name: Name of the strategy
+            name: Name to register the strategy under
             strategy_class: The strategy class to register
         """
+        if not issubclass(strategy_class, SearchStrategy):
+            raise ValueError("Strategy class must implement SearchStrategy interface")
+
         cls._strategies[name] = strategy_class
-        logger.info(f"Registered search strategy: {name}")
+        logger.info(f"Registered new search strategy: {name}")
