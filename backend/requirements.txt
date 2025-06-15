@@ -24,3 +24,4 @@ python-multipart
 aiofiles
 tenacity
 tqdm
+pydantic-settings>=2.0.0
