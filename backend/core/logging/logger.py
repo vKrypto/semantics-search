@@ -6,6 +6,7 @@ from typing import Optional
 
 class Logger:
     _instance: Optional["Logger"] = None
+    logger = None
 
     def __new__(cls):
         if cls._instance is None:
