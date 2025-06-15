@@ -10,7 +10,7 @@ from core.config.settings import AppSettings
 from core.logging.logger import logger
 
 # Create FastAPI app
-app = FastAPI(title=AppSettings.PROJECT_NAME, openapi_url=f"{AppSettings.API_V1_STR}/openapi.json")
+app = FastAPI(title=AppSettings.PROJECT_NAME, openapi_url=f"{AppSettings.VERSION_STR}/openapi.json")
 
 # Setup CORS
 app.add_middleware(
@@ -25,8 +25,8 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Include routers
-app.include_router(chat.router, prefix=AppSettings.API_V1_STR)
-app.include_router(search.router, prefix=AppSettings.API_V1_STR)
+app.include_router(chat.router, prefix=AppSettings.APP_PREFIX_STR)
+app.include_router(search.router, prefix=AppSettings.APP_PREFIX_STR)
 
 
 @app.on_event("startup")

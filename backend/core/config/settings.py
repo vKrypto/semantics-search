@@ -8,7 +8,8 @@ class AppSettingsClass(BaseSettings):
     """Singleton settings class for the application."""
 
     # API Settings
-    API_V1_STR: str = "/api/v1"
+    VERSION_STR: str = "/v1"
+    APP_PREFIX_STR: str = "/app"
     PROJECT_NAME: str = "Semantic Search API"
 
     # CORS Settings
@@ -24,7 +25,8 @@ class AppSettingsClass(BaseSettings):
 
     # Search Settings
     VECTOR_DB_TYPE: str = "chroma"
-    EMBEDDING_MODEL: str = "text-embedding-ada-002"
+    # EMBEDDING_MODEL: str = "text-embedding-ada-002"
+    EMBEDDING_MODEL: str = "all-mpnet-base-v2"
 
     class Config:
         case_sensitive = True

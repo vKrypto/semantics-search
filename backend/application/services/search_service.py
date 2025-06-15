@@ -1,16 +1,17 @@
 import time
 from typing import List
 
+from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.search import SearchStrategy
-from domain.models.search import SearchRequest, SearchResponse, SearchResult
+from domain.models.search import SearchRequest, SearchResponse, SearchResult, SearchType
 from infrastructure.search.factory import SearchStrategyFactory
 
 
 class SearchService:
     """Service for handling search operations."""
 
-    def __init__(self, strategy_name: str = "hybrid", **strategy_kwargs):
+    def __init__(self, strategy_name: SearchType = SearchType.COSINE, **strategy_kwargs):
         """Initialize the search service.
 
         Args:

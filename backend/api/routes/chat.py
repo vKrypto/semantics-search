@@ -4,13 +4,14 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
 from application.services.chat_service import ChatService
+from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.models.chat import ChatRequest, ChatResponse
 from infrastructure.llm.factory import LLMFactory
 from infrastructure.search import SearchStrategyFactory
 
 router = APIRouter(
-    prefix="/chat",
+    prefix=f"{AppSettings.VERSION_STR}/chat",
     tags=["Chat"],
     responses={404: {"description": "Not found"}},
 )

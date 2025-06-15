@@ -1,3 +1,4 @@
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -5,12 +6,12 @@ from fastapi import APIRouter, Depends, Query, Request
 from fastapi.templating import Jinja2Templates
 
 from application.services.search_service import SearchService
+from core.config.settings import AppSettings
 from core.logging.logger import logger
-from domain.models.search import SearchRequest, SearchResponse
-from infrastructure.search import SearchStrategyFactory
+from domain.models.search import SearchRequest, SearchResponse, SearchType
 
 router = APIRouter(
-    prefix="/search",
+    prefix=f"{AppSettings.VERSION_STR}/search",
     tags=["Search"],
     responses={404: {"description": "Not found"}},
 )
@@ -20,25 +21,23 @@ templates_path = Path(__file__).parent.parent.parent / "templates"
 templates = Jinja2Templates(directory=str(templates_path))
 
 
-async def get_search_service() -> SearchService:
+@lru_cache
+def _get_search_service() -> SearchService:
     """Dependency to get search service instance."""
-    search_strategy = SearchStrategyFactory.create_strategy("cosine")
-    return SearchService(search_strategy)
+    return SearchService(SearchType.COSINE)
 
 
 @router.get("/")
-async def get_search_interface(request: Request, q: Optional[str] = Query(None, alias="q")):
-    """Get the search interface template or perform search if query provided."""
-    if not q:
-        return templates.TemplateResponse("search.html", {"request": request})
-
-    search_service = await get_search_service()
-    search_request = SearchRequest(query=q)
-    return await search_service.search(search_request)
+async def get_search_interface(request: Request):
+    return templates.TemplateResponse("search.html", {"request": request})
 
 
 @router.post("/", response_model=SearchResponse)
-async def search(request: SearchRequest, search_service: SearchService = Depends(get_search_service)) -> SearchResponse:
-    """Process a search request."""
-    logger.info(f"Received search request: {request.query}")
-    return await search_service.search(request)
+async def search(_: Request, q: str = Query(None, alias="q")) -> SearchResponse:
+    search_service: SearchService = _get_search_service()
+    if q is not None:
+        search_request = SearchRequest(query=q)
+    else:
+        raise ValueError("Either request body or query parameter 'q' must be provided")
+    logger.info(f"Received search request: {q}")
+    return await search_service.search(search_request)

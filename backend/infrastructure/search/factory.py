@@ -1,10 +1,11 @@
-from typing import Dict, Type
+from typing import Dict, Optional, Type
 
 from sentence_transformers import SentenceTransformer
 
 from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.search import SearchStrategy
+from domain.models.search import SearchType
 
 from .ann_strategy import ANNSearchStrategy
 from .cosine_strategy import CosineSearchStrategy
@@ -15,24 +16,24 @@ from .hybrid_strategy import HybridSearchStrategy
 class SearchStrategyFactory:
     """Factory for creating search strategy instances."""
 
-    _strategies: Dict[str, Type[SearchStrategy]] = {
-        "hybrid": HybridSearchStrategy,
-        "cosine": CosineSearchStrategy,
-        "euclidean": EuclideanSearchStrategy,
-        "ann": ANNSearchStrategy,
+    _strategies: Dict[Type[SearchType], Type[SearchStrategy]] = {
+        SearchType.COSINE: CosineSearchStrategy,
+        SearchType.HYBRID: HybridSearchStrategy,
+        SearchType.EUCLIDIAN: EuclideanSearchStrategy,
+        SearchType.ANN: ANNSearchStrategy,
     }
 
-    _model: SentenceTransformer = None
+    _model: Optional[SentenceTransformer] = None
 
     @classmethod
     def _initialize_model(cls) -> None:
         """Initialize the sentence transformer model if not already initialized."""
         if cls._model is None:
             logger.info(f"Initializing sentence transformer model: {AppSettings.EMBEDDING_MODEL}")
-            cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL)
+            cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL, local_files_only=True)
 
     @classmethod
-    def create_strategy(cls, strategy_name: str, **kwargs) -> SearchStrategy:
+    def create_strategy(cls, strategy_name: Type[SearchType], **kwargs) -> SearchStrategy:
         """Create a search strategy instance.
 
         Args:
@@ -64,7 +65,7 @@ class SearchStrategyFactory:
         return list(cls._strategies.keys())
 
     @classmethod
-    def register_strategy(cls, name: str, strategy_class: Type[SearchStrategy]) -> None:
+    def register_strategy(cls, name: Type[SearchType], strategy_class: Type[SearchStrategy]) -> None:
         """Register a new search strategy.
 
         Args:
