@@ -5,23 +5,13 @@ from sentence_transformers import SentenceTransformer
 from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.search import SearchStrategy
-from domain.models.search import SearchType
-
-from .ann_strategy import ANNSearchStrategy
-from .cosine_strategy import CosineSearchStrategy
-from .euclidean_strategy import EuclideanSearchStrategy
-from .hybrid_strategy import HybridSearchStrategy
+from domain.models.search import StrategyType
 
 
 class SearchStrategyFactory:
     """Factory for creating search strategy instances."""
 
-    _strategies: Dict[Type[SearchType], Type[SearchStrategy]] = {
-        SearchType.COSINE: CosineSearchStrategy,
-        SearchType.HYBRID: HybridSearchStrategy,
-        SearchType.EUCLIDIAN: EuclideanSearchStrategy,
-        SearchType.ANN: ANNSearchStrategy,
-    }
+    _strategies: Dict[Type[StrategyType], Type[SearchStrategy]] = {}
 
     _model: Optional[SentenceTransformer] = None
 
@@ -33,7 +23,7 @@ class SearchStrategyFactory:
             cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL, local_files_only=True)
 
     @classmethod
-    def create_strategy(cls, strategy_name: Type[SearchType], **kwargs) -> SearchStrategy:
+    def create_strategy(cls, strategy_name: Type[StrategyType] = StrategyType.DEFAULT, **kwargs) -> SearchStrategy:
         """Create a search strategy instance.
 
         Args:
@@ -65,7 +55,7 @@ class SearchStrategyFactory:
         return list(cls._strategies.keys())
 
     @classmethod
-    def register_strategy(cls, name: Type[SearchType], strategy_class: Type[SearchStrategy]) -> None:
+    def register_strategy(cls, name: Type[StrategyType], strategy_class: Type[SearchStrategy]) -> None:
         """Register a new search strategy.
 
         Args:
@@ -76,4 +66,4 @@ class SearchStrategyFactory:
             raise ValueError("Strategy class must implement SearchStrategy interface")
 
         cls._strategies[name] = strategy_class
-        logger.info(f"Registered new search strategy: {name}")
+        logger.info("Registered new search strategy: %s", name)

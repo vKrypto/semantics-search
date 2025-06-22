@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from application.services.search_service import SearchService
 from core.config.settings import AppSettings
 from core.logging.logger import logger
-from domain.models.search import SearchRequest, SearchResponse, SearchType
+from domain.models.search import SearchRequest, SearchResponse, StrategyType
 
 router = APIRouter(
     prefix=f"{AppSettings.VERSION_STR}/search",
@@ -23,8 +23,7 @@ templates = Jinja2Templates(directory=str(templates_path))
 
 @lru_cache
 def _get_search_service() -> SearchService:
-    """Dependency to get search service instance."""
-    return SearchService(SearchType.COSINE)
+    return SearchService()
 
 
 @router.get("/")

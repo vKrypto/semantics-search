@@ -4,14 +4,14 @@ from typing import List
 from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.search import SearchStrategy
-from domain.models.search import SearchRequest, SearchResponse, SearchResult, SearchType
+from domain.models.search import SearchRequest, SearchResponse, SearchResult, StrategyType
 from infrastructure.search.factory import SearchStrategyFactory
 
 
 class SearchService:
     """Service for handling search operations."""
 
-    def __init__(self, strategy_name: SearchType = SearchType.COSINE, **strategy_kwargs):
+    def __init__(self, strategy_name: StrategyType = StrategyType.DEFAULT, **strategy_kwargs):
         """Initialize the search service.
 
         Args:

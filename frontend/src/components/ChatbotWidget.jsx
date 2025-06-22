@@ -38,7 +38,7 @@ const ChatbotWidget = () => {
     setInput("");
 
     try {
-      const res = await axios.post("/api/v1/chat/", {
+      const res = await axios.post("/app/v1/chat/", {
         query: userMsg,
       });
       setMessages((prev) => [...prev, { from: "bot", text: res.data.response }]);

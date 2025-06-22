@@ -1,7 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
 from domain.models.search import SearchRequest, SearchResult
+
+nltk.download("stopwords")
+STOP_WORDS = set(stopwords.words("english"))
 
 
 class SearchStrategy(ABC):
@@ -27,3 +34,18 @@ class SearchStrategy(ABC):
             The name of the strategy (e.g., 'cosine', 'euclidean', 'hybrid')
         """
         pass
+
+    @staticmethod
+    def clean_and_remove_stop_words(text: str, language: str = "english") -> str:
+        """
+        Remove stop words from the query
+        Args:
+            query: The query to remove stop words from
+        Returns:
+            A string of the query without stop words
+        """
+        text = text.lower().strip().replace("  ", " ")
+        stop_words = STOP_WORDS if language == "english" else set(stopwords.words(language))
+        word_tokens = word_tokenize(text)
+        filtered = [w for w in word_tokens if w not in stop_words]
+        return " ".join(filtered)

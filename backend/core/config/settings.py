@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings
 
+from domain.models.index_store import IndexStoreProviderType
+
 
 class AppSettingsClass(BaseSettings):
     """Singleton settings class for the application."""
@@ -24,6 +26,9 @@ class AppSettingsClass(BaseSettings):
     DEFAULT_LLM_PROVIDER: str = "openai"
 
     # Search Settings
+    DEFAULT_INDEX_STORE: str = IndexStoreProviderType.ELASTIC_DB
+    ELASTIC_URL: str = "http://localhost:9200"
+
     VECTOR_DB_TYPE: str = "chroma"
     # EMBEDDING_MODEL: str = "text-embedding-ada-002"
     EMBEDDING_MODEL: str = "all-mpnet-base-v2"
