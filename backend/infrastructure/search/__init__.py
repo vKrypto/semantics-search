@@ -5,7 +5,13 @@ Need Full Semantic Search
 from domain.models.search import StrategyType
 
 from .factory import SearchStrategyFactory
-from .strategies import ANNSearchStrategy, CosineSearchStrategy, EuclideanSearchStrategy, HybridSearchStrategy
+from .search_strategies import (
+    ANNSearchStrategy,
+    CosineEncoder,
+    CosineSearchStrategy,
+    EuclideanSearchStrategy,
+    HybridSearchStrategy,
+)
 
 SearchStrategyFactory.register_strategy(StrategyType.DEFAULT, CosineSearchStrategy)
 SearchStrategyFactory.register_strategy(StrategyType.COSINE, CosineSearchStrategy)
@@ -20,4 +26,5 @@ __all__ = [
     "EuclideanSearchStrategy",
     "CosineSearchStrategy",
     "ANNSearchStrategy",
+    "CosineEncoder",
 ]

@@ -4,6 +4,7 @@ from typing import List
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from pandas import DataFrame
 
 from domain.models.search import SearchRequest, SearchResult
 
@@ -24,7 +25,6 @@ class SearchStrategy(ABC):
         Returns:
             List of search results
         """
-        pass
 
     @abstractmethod
     def get_strategy_name(self) -> str:
@@ -33,7 +33,12 @@ class SearchStrategy(ABC):
         Returns:
             The name of the strategy (e.g., 'cosine', 'euclidean', 'hybrid')
         """
-        pass
+
+    @abstractmethod
+    def encode_df(self, df: DataFrame) -> DataFrame:
+        """
+        Encode raw df to vector, which will be directly gget stored on index_store
+        """
 
     @staticmethod
     def clean_and_remove_stop_words(text: str, language: str = "english") -> str:

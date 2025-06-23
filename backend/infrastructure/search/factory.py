@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Iterable, Optional, Type
 
 from sentence_transformers import SentenceTransformer
 
@@ -46,7 +46,7 @@ class SearchStrategyFactory:
         return strategy_class(model=cls._model, **kwargs)
 
     @classmethod
-    def get_available_strategies(cls) -> list[str]:
+    def get_available_strategies(cls) -> Iterable[Type[StrategyType]]:
         """Get a list of available strategy names.
 
         Returns:

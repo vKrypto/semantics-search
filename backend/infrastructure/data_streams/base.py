@@ -1,7 +1,8 @@
-from typing import Dict, Iterable
+from typing import Any, Dict, Generator, Iterable
 
 import pandas as pd
-from utils import timeit
+
+from core.utils import timeit
 
 from .faq import FAQData
 from .kafka import KafkaData
@@ -18,7 +19,7 @@ class DataStream:
             "400": OrnazProductsData(),
         }
 
-    def __iter__(self) -> Iterable[str]:
+    def __iter__(self) -> Generator[dict[str, int | str | dict[str, str]], Any, Any]:
         for source_index, data_source in self.data_sources.items():
             source_data_index = 0
             for item in data_source:

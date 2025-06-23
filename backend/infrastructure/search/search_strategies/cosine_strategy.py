@@ -1,13 +1,18 @@
 import abc
-from typing import Iterable, List, Optional, Type
+from typing import AsyncGenerator, Generator, Iterable, List, Optional, Type
 
 import numpy as np
+from pandas import DataFrame
 from sentence_transformers import SentenceTransformer
 
 from core.logging.logger import logger
+from core.utils import timeit
 from domain.interfaces.search import SearchStrategy
 from domain.models.search import SearchResult, StrategyType
 from infrastructure.index_store import IndexStoreFactory
+
+# TODO: temp fix
+np.float_ = np.float64
 
 
 class QuerySelector(abc.ABC):
@@ -37,7 +42,28 @@ class CosineQuerySelector:
         }
 
 
-class CosineSearchStrategy(SearchStrategy):
+class CosineEncoder:
+
+    @staticmethod
+    def _normalize(vec):
+        vec = np.array(vec)
+        norm = np.linalg.norm(vec)
+        return (vec / norm).tolist() if norm > 0 else vec.tolist()
+
+    @timeit
+    @classmethod
+    def encode_df(cls, model: SentenceTransformer, df: DataFrame) -> DataFrame:
+        """
+        Encode the data from the dataframe
+        Args:
+            df: The dataframe to encode
+        """
+        logger.info(f"Creating Embding for : {len(df)} entries")
+        df["title_vectors"] = df["title"].apply(lambda x: cls._normalize(model.encode(x)))  # --> [-1, 1]
+        return df
+
+
+class CosineSearchStrategy(SearchStrategy, CosineEncoder):
     """Search strategy using cosine similarity."""
 
     # both are commonly being used, assuming they will be static
@@ -59,12 +85,6 @@ class CosineSearchStrategy(SearchStrategy):
         if self._es_connector is None:
             CosineSearchStrategy._es_connector = IndexStoreFactory.create_provider(index_name=self.index_name)
 
-    @staticmethod
-    def _normalize(vec):
-        vec = np.array(vec)
-        norm = np.linalg.norm(vec)
-        return (vec / norm).tolist() if norm > 0 else vec.tolist()
-
     def search_query_vector(self, query_vector) -> Iterable[dict]:
         try:
             res = self._es_connector.conn.search(index=self.index_name, body=self._qs.search_query(query_vector))
@@ -83,7 +103,7 @@ class CosineSearchStrategy(SearchStrategy):
             return -1
         return float(np.dot(vec1, vec2) / (norm1 * norm2))
 
-    async def search(self, query: str, raw_format: bool = False) -> List[SearchResult]:
+    async def search(self, query: str, raw_format: bool = False) -> AsyncGenerator[Generator[SearchResult]]:
         """Perform a cosine similarity search.
         Returns:
             List of search results
