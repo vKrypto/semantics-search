@@ -1,5 +1,5 @@
 import abc
-from typing import Iterable, List, Type
+from typing import Iterable, List, Optional, Type
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -42,7 +42,7 @@ class CosineSearchStrategy(SearchStrategy):
 
     # both are commonly being used, assuming they will be static
     _es_connector = None
-    _qs: Type[QuerySelector] = None
+    _qs: Optional[Type[QuerySelector]] = None
 
     def __init__(self, model: SentenceTransformer, index_name: str = "documents", **kwargs):
         """Initialize the cosine search strategy.

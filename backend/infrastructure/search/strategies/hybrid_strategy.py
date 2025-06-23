@@ -41,7 +41,7 @@ class HybridSearchStrategy(SearchStrategy):
         self.min_score = min_score
         self.cosine_weight = cosine_weight
         self.euclidean_weight = euclidean_weight
-        logger.info(f"Initialized hybrid search with weights: cosine={cosine_weight}, euclidean={euclidean_weight}")
+        logger.info("Initialized hybrid search with weights: cosine=%s, euclidean=%s", cosine_weight, euclidean_weight)
 
     @staticmethod
     def _normalize(vec: np.ndarray) -> np.ndarray:

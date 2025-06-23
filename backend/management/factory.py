@@ -1,10 +1,14 @@
+from abc import abstractmethod
 from typing import Any, Dict, Type
 
+from ac import ABC
+
 from domain.interfaces.management import ManagementCommondBase
+from domain.models.management import Command
 
 
-class ManagementCommandFactory:
-    _commands: Dict[str, Type[ManagementCommondBase]] = {}
+class ManagementCommandFactory(ABC):
+    _commands: Dict[Type[Command], Type[ManagementCommondBase]] = {}
     _shared_resource = None  # e.g., a model, db connection, etc.
 
     @classmethod
@@ -15,7 +19,11 @@ class ManagementCommandFactory:
             pass
 
     @classmethod
-    def register_command(cls, name: str, command_class: Type[ManagementCommondBase]):
+    def _release_resource(cls):
+        cls._shared_resource = None
+
+    @classmethod
+    def register_command(cls, name: Type[Command], command_class: Type[ManagementCommondBase]):
         if not issubclass(command_class, ManagementCommondBase):
             raise ValueError("Command class must implement ManagementCommondBase interface")
         cls._commands[name] = command_class
@@ -29,6 +37,7 @@ class ManagementCommandFactory:
         return cls._commands[command_name](**kwargs)
 
     @classmethod
-    async def execute_command(cls, command_name: str, **kwargs) -> Any:
+    async def execute_command(cls, command_name: str, **kwargs) -> None:
         command = cls.create_command(command_name, **kwargs)
-        return await command.execute(**kwargs)
+        await command.execute(**kwargs)
+        cls._release_resource()

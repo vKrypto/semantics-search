@@ -28,6 +28,7 @@ class AppSettingsClass(BaseSettings):
     # Search Settings
     DEFAULT_INDEX_STORE: str = IndexStoreProviderType.ELASTIC_DB
     ELASTIC_URL: str = "http://localhost:9200"
+    DEFAULT_INDEX_NAME: str = "documents"
 
     VECTOR_DB_TYPE: str = "chroma"
     # EMBEDDING_MODEL: str = "text-embedding-ada-002"

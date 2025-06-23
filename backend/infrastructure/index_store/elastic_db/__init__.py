@@ -1,4 +1,4 @@
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import BulkIndexError, bulk
@@ -11,9 +11,9 @@ from .models import INDEX_MAPPINGS
 
 class ElasticsearchStore(IndexStoreProvider):
     ELASTIC_URL = AppSettings.ELASTIC_URL
-    _conn = None
-    index_name = ...
-    index_mapping = None
+    _conn: Optional[Elasticsearch] = None
+    index_name: Optional[str] = None
+    index_mapping: Optional[dict] = None
 
     def __init__(self, index_name: str) -> None:
         self.index_name = index_name
