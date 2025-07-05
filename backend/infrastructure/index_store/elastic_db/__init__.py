@@ -10,13 +10,16 @@ from .models import INDEX_MAPPINGS
 
 
 class ElasticsearchStore(IndexStoreProvider):
+    """
+    Elasticsearch store provider
+    """
+
     ELASTIC_URL = AppSettings.ELASTIC_URL
     _conn: Optional[Elasticsearch] = None
-    index_name: Optional[str] = None
     index_mapping: Optional[dict] = None
 
     def __init__(self, index_name: str) -> None:
-        self.index_name = index_name
+        self.index_name: str = index_name
         if index_name not in INDEX_MAPPINGS:
             raise ValueError(f"Invalid index name: {index_name}, available options: {list(INDEX_MAPPINGS.keys())}!")
         self.index_mapping = INDEX_MAPPINGS[index_name]
@@ -37,13 +40,13 @@ class ElasticsearchStore(IndexStoreProvider):
         return es_conn
 
     def _create_index(self):
-        if not self.conn.indices.exists(index=self.index_name):
-            self.conn.indices.create(index=self.index_name, mappings=self.index_mapping)
+        if not self.conn.indices.exists(index=str(self.index_name)):
+            self.conn.indices.create(index=str(self.index_name), mappings=self.index_mapping)
             print(f"Index '{self.index_name}' created")
 
     def add_documents(self, documents: Iterable[Dict]) -> None:
         self._create_index()
-        print(f"Adding documents... {len(documents)} documents")
+        print("Adding documents..")
         for record in documents:
             try:
                 self.conn.index(index=self.index_name, document=record, id=record["id"])
@@ -53,11 +56,11 @@ class ElasticsearchStore(IndexStoreProvider):
 
     def add_bulk_documents(self, documents: Iterable[Dict]) -> None:
         self._create_index()
-        print(f"Adding documents... {len(documents)} documents")
+        print("Adding documents...")
         actions = [{"_index": self.index_name, "_id": doc["id"], "_source": doc} for doc in documents]
         try:
             success, failed = bulk(self.conn, actions)
-            print(f"Bulk insert completed: {success} succeeded")
+            print(f"Bulk insert completed: {success} succeeded, {failed} failed")
         except BulkIndexError as e:
             try:
                 caused = e.errors[0]["index"]["error"]["caused_by"]

@@ -26,7 +26,7 @@ class AppSettingsClass(BaseSettings):
     DEFAULT_LLM_PROVIDER: str = "openai"
 
     # Search Settings
-    DEFAULT_INDEX_STORE: str = IndexStoreProviderType.ELASTIC_DB
+    DEFAULT_INDEX_STORE: IndexStoreProviderType = IndexStoreProviderType.ELASTIC_DB
     ELASTIC_URL: str = "http://localhost:9200"
     DEFAULT_INDEX_NAME: str = "documents"
 
