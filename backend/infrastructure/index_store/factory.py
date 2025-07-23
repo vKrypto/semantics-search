@@ -9,10 +9,10 @@ from domain.models.index_store import IndexStoreProviderType
 class IndexStoreFactory:
     """Factory for creating Index Store Provider instances."""
 
-    _providers: Dict[Type[IndexStoreProviderType], Type[IndexStoreProvider]] = {}
+    _providers: Dict[IndexStoreProviderType, Type[IndexStoreProvider]] = {}
 
     @classmethod
-    def register_provider(cls, name: Type[IndexStoreProviderType], provider_class: Type[IndexStoreProvider]) -> None:
+    def register_provider(cls, name: IndexStoreProviderType, provider_class: Type[IndexStoreProvider]) -> None:
         cls._providers[name] = provider_class
         logger.info(f"Registered Index Store Provider: {name}")
 

@@ -6,6 +6,7 @@ from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.management import ManagementCommondBase
 from infrastructure.index_store import ElasticsearchStore
+from management.commands.search.indexer import EncodedDFLoader
 
 
 class RefreshIndexStoreCommand(ManagementCommondBase):
@@ -24,7 +25,9 @@ class RefreshIndexStoreCommand(ManagementCommondBase):
             cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL, local_files_only=True)
 
     async def execute(self, **kwargs) -> None:
-        print(f"Refreshing index store with param: {self.index_param}, extra: {kwargs}")
+        print(
+            f"Refreshing index store with param: {self.index_param}, extra: {kwargs}"
+        )
         await self.re_indexing(self._model, self._index_name, refresh=True)
 
     def get_command_name(self) -> str:
@@ -38,9 +41,9 @@ class RefreshIndexStoreCommand(ManagementCommondBase):
         es.add_bulk_documents(records)
         print(f"Re-indexing done!, total indexed documents: {es.count()}")
 
-    async def re_indexing(self, model, index_name: str, refresh=False):
-        obj = DFDataEncoder(model=model, index_name=index_name, refresh=refresh)
-        self._update_index_store(index_name, obj.get_records())
+    async def re_indexing(self, model, index_name: str, refresh: bool = False) -> None:
+        loader = EncodedDFLoader(model=model, index_name=index_name, refresh=refresh)
+        self._update_index_store(index_name, loader.get_records())
 
     @classmethod
     def _release_resource(cls) -> None:
