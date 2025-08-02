@@ -4,8 +4,6 @@ from .indexer import DataIndexer
 
 
 class RefreshEmbeddingsCommand(ManagementCommondBase):
-    def __init__(self, some_param=None, **kwargs):
-        self.some_param = some_param
 
     async def execute(self, **kwargs):
         # Use self.some_param and kwargs for logic

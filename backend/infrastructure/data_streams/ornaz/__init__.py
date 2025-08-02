@@ -1,11 +1,13 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import Any, Iterator
+from domain.interfaces.data_streams import DataStream
 
 
 @dataclass
-class OrnazProductsData(Iterator[Any]):
+class OrnazProductsData(DataStream):
+    # use as a example to refresh from live data
+
     def __post_init__(self):
         filepath = os.path.join(os.path.dirname(__file__), "data.json")
         with open(filepath) as f:
@@ -17,7 +19,4 @@ class OrnazProductsData(Iterator[Any]):
 
     def __next__(self):
         item = self.data[next(self._iter)]["data"]  # raises StopIteration when done
-        return {
-            "title": item["url"],
-            "description": item["pdp_url"].replace("/", " ").replace("-", " "),
-        }
+        return {"key": item["url"], "value": item}

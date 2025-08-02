@@ -13,9 +13,6 @@ class RefreshIndexStoreCommand(ManagementCommondBase):
     _index_name = AppSettings.DEFAULT_INDEX_NAME
     _model: Optional[SentenceTransformer] = None
 
-    def __init__(self, index_param=None, **kwargs):
-        self.index_param = index_param
-
     @classmethod
     def _initialize_resource(cls) -> None:
         """Initialize the sentence transformer model if not already initialized."""
@@ -27,7 +24,9 @@ class RefreshIndexStoreCommand(ManagementCommondBase):
         print(f"Refreshing index store with param: {self.index_param}, extra: {kwargs}")
         await self.re_indexing(self._model, self._index_name, refresh=True)
 
-    def get_command_name(self) -> str:
+
+    @staticmethod
+    def get_command_name() -> str:
         return "refresh-index-store"
 
     @staticmethod
@@ -38,9 +37,10 @@ class RefreshIndexStoreCommand(ManagementCommondBase):
         es.add_bulk_documents(records)
         print(f"Re-indexing done!, total indexed documents: {es.count()}")
 
-    async def re_indexing(self, model, index_name: str, refresh=False):
+    @classmethod
+    async def re_indexing(cls, model, index_name: str, refresh=False):
         obj = DFDataEncoder(model=model, index_name=index_name, refresh=refresh)
-        self._update_index_store(index_name, obj.get_records())
+        cls._update_index_store(index_name, obj.get_records())
 
     @classmethod
     def _release_resource(cls) -> None:

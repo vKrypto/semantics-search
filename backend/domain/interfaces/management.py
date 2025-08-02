@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 
 
 class ManagementCommondBase(ABC):
+    # Make sure ManagementCommondBase does not actually acept any parameters in its constructor from command line
+
     @abstractmethod
     async def execute(self, **kwargs):
         """Execute the management action."""

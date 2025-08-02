@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from typing import Any, Dict, Type
 
 from abc import ABC
@@ -17,6 +16,10 @@ class ManagementCommandFactory(ABC):
             # Initialize any shared resource here if needed
             # For example: cls._shared_resource = SomeModel.load()
             pass
+    
+    @classmethod
+    def get_all_commands(cls) -> Dict[str, Type[ManagementCommondBase]]:
+        return {key.value.lower(): val for key, val in cls._commands.items()}
 
     @classmethod
     def _release_resource(cls):
