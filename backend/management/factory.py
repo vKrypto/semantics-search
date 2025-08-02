@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Dict, Type
 
-from ac import ABC
+from abc import ABC
 
 from domain.interfaces.management import ManagementCommondBase
 from domain.models.management import Command
