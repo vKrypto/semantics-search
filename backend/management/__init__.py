@@ -6,9 +6,9 @@ from .commands.index_store import ReindexingCommand
 from .factory import ManagementCommandFactory
 
 
-ManagementCommandFactory.register_command(Command.REFRESH_EMBEDDINGS, RefreshEmbeddingsCommand)
 ManagementCommandFactory.register_command(Command.VALIDATE_STREAMS_DATA, ValidateStreamsData)
 ManagementCommandFactory.register_command(Command.VALIDATE_STREAMS, ValidateStreams)
 ManagementCommandFactory.register_command(Command.REFRESH_INDEX_STORE, ReindexingCommand)
+ManagementCommandFactory.register_command(Command.REFRESH_EMBEDDINGS, RefreshEmbeddingsCommand)
 
 __all__ = ["ManagementCommandFactory"]
