@@ -39,8 +39,8 @@ class ManagementScript:
             return
             
         print("Available commands:")
-        for command_name in self.discovered_commands.keys():
-            print(f"  {command_name}")
+        for command_name in self.discovered_commands:
+            print(f"  python manage.py {command_name}")
             
     def execute_command(self, command_name: str, args: list = None, kwargs: Dict[str, Any] = None):
         args = args or []
@@ -65,7 +65,7 @@ def main():
 
 
     if args.command == 'list':
-        mgmt.list_commands()
+        mgmt.list()
     elif args.command not in mgmt.discovered_commands:
         print(f"Unknown command: {args.command}")
         parser.print_help()

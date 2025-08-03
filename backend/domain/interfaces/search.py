@@ -9,8 +9,8 @@ from core.config.settings import AppSettings
 from domain.models.search import SearchRequest, SearchResult
 
 
-nltk.download("stopwords", download_dir=AppSettings.MODEL_CACHE_DIR)
-nltk.download("punkt", download_dir=AppSettings.MODEL_CACHE_DIR)
+nltk.download("stopwords", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
+nltk.download("punkt", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
 STOP_WORDS = set(stopwords.words("english"))
 
 

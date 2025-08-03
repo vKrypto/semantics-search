@@ -39,3 +39,12 @@ class ReindexingCommand(ManagementCommondBase):
     async def release_resources(cls) -> None:
         """Release the sentence transformer model."""
         cls._model = None
+
+
+class RefreshEmbeddingsCommand(ReindexingCommand):
+    COMMOND_NAME = Command.REFRESH_INDEX_STORE
+
+    @classmethod
+    async def execute(cls, **kwargs):
+        DataIndexer.refresh_index_store(cls._model, index_name=cls._index_name, index_type=cls._index_type, refresh=True)
+ 
