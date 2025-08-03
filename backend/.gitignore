@@ -23,3 +23,4 @@ test-results.xml
 *.log
 logs/
 venv*
+models_cache
