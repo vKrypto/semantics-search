@@ -39,9 +39,9 @@ class ManagementScript:
             print(f"  {command_name}")
             
     def execute_command(self, command_name: str, args: list = None, kwargs: Dict[str, Any] = None):
+        """Execute a specific command."""
         args = args or []
         kwargs = kwargs or {}
-        """Execute a specific command."""
         if command_name not in self.discovered_commands:
             print(f"Unknown command: {command_name}")
             print("Use 'python manage.py list' to see available commands.")
