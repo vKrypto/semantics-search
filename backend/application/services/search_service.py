@@ -38,7 +38,7 @@ class SearchService:
             logger.info(f"Switched to search strategy: {request.search_type}")
 
         # Perform search using the strategy
-        results = await self.strategy.search(request)
+        results = [item async for item in self.strategy.search(request.query)]
 
         # Calculate processing time
         server_time = (time.time() - start_time) * 1000  # Convert to milliseconds

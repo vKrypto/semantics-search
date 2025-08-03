@@ -33,7 +33,7 @@ class ManagementCommandFactory(ABC):
     async def execute_command(cls, command_name: str, **kwargs) -> None:
         command = cls.create_command(command_name, **kwargs)
         try:
-            command.initialize_resources()
+            await command.initialize_resources()
             await command.execute(**kwargs)
             print(f"Command {command_name} executed successfully.")
         except Exception as e:
@@ -41,7 +41,7 @@ class ManagementCommandFactory(ABC):
             import traceback
             traceback.print_exc()
         finally:
-            command.release_resources()
+            await command.release_resources()
 
     @classmethod
     def auto_register_commands(cls):

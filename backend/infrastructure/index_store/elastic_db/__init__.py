@@ -19,7 +19,7 @@ class ElasticsearchStore(IndexStoreProvider):
     index_mapping: Optional[dict] = None
 
     def __init__(self,  index_name:str = None, index_type: str = None) -> None:
-        self.index_type: str = index_type  or AppSettings.DEFAULT_INDEX_TYPE
+        index_type: str = index_type  or AppSettings.DEFAULT_INDEX_TYPE
         self.index_name: str = index_name or AppSettings.DEFAULT_INDEX_NAME
         if index_type not in INDEX_MAPPINGS:
             raise ValueError(f"Invalid index index_type: {index_type}, available options: {list(INDEX_MAPPINGS.keys())}!")
@@ -31,7 +31,7 @@ class ElasticsearchStore(IndexStoreProvider):
         return self._conn
 
     def get_es_connection(self) -> Elasticsearch:
-        es_conn = Elasticsearch(self.ELASTIC_URL, timeout=60, max_retries=3, retry_on_timeout=True)
+        es_conn = Elasticsearch(self.ELASTIC_URL, request_timeout=60, max_retries=3, retry_on_timeout=True)
         try:
             info = es_conn.info()
             print("Connected to Elasticsearch:", info["version"]["number"])

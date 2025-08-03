@@ -10,6 +10,7 @@ from core.utils import timeit
 from domain.interfaces.search import SearchStrategy
 from domain.models.search import SearchResult, StrategyType
 from infrastructure.index_store import IndexStoreFactory
+from core.config.settings import AppSettings
 
 # TODO: temp fix
 np.float_ = np.float64
@@ -63,14 +64,14 @@ class CosineEncoder:
         return df
 
 
-class CosineSearchStrategy(SearchStrategy, CosineEncoder):
+class CosineSearchStrategy(CosineEncoder, SearchStrategy):
     """Search strategy using cosine similarity."""
 
     # both are commonly being used, assuming they will be static
     _es_connector = None
     _qs: Optional[Type[QuerySelector]] = None
 
-    def __init__(self, model: SentenceTransformer, index_name: str = "documents", **kwargs):
+    def __init__(self, model: SentenceTransformer, index_name: str = None, **kwargs):
         """Initialize the cosine search strategy.
 
         Args:
@@ -78,7 +79,7 @@ class CosineSearchStrategy(SearchStrategy, CosineEncoder):
             index_name: Name of the search index
         """
         self.model = model
-        self.index_name = index_name
+        self.index_name = index_name or AppSettings.DEFAULT_INDEX_NAME
 
         if self._qs is None:
             CosineSearchStrategy._qs = CosineQuerySelector(**kwargs)
