@@ -1,5 +1,4 @@
 from typing import Optional
-
 from sentence_transformers import SentenceTransformer
 
 from core.config.settings import AppSettings
@@ -28,7 +27,7 @@ class ReindexingCommand(ManagementCommondBase):
     @classmethod
     async def execute(cls, **kwargs) -> None:
         print(f"Re-indexing with param: {cls.index_param}, extra: {kwargs}")
-        await DataIndexer.re_indexing(cls._model, cls._index_name, refresh=True)
+        DataIndexer.re_indexing(cls._model, cls._index_name, refresh=True)
     
     @staticmethod
     def get_command_name() -> str:
