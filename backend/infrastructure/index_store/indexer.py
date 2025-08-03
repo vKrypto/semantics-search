@@ -69,6 +69,6 @@ class DataIndexer:
 
     @staticmethod
     @timeit
-    def re_indexing(model, index_name: str, refresh=False) -> None:
+    def re_indexing(model, index_name: str, refresh:bool=False) -> None:
         obj = EncodedDFLoader(model=model, index_name=index_name, refresh=refresh)
         return obj.get_records()
