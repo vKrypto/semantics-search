@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 
 class ManagementCommondBase(ABC):
+    COMMOND_NAME: str = ...
     # Make sure ManagementCommondBase does not actually acept any parameters in its constructor from command line
 
     async def initialize_resources(*args, **kwargs):
@@ -14,7 +15,7 @@ class ManagementCommondBase(ABC):
         """Execute the management action."""
 
     @abstractmethod
-    async def get_strategy_name(*args) -> str:
+    async def get_command_name(*args) -> str:
         """Return the name of the strategy."""
 
     async def release_resources(*args, **kwargs) -> None:

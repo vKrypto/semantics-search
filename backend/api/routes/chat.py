@@ -17,8 +17,8 @@ router = APIRouter(
 )
 
 # Mount templates
-# templates_path = Path(__file__).parent.parent.parent / "templates"
-# templates = Jinja2Templates(directory=str(templates_path))
+templates_path = Path(__file__).parent.parent.parent / "templates"
+templates = Jinja2Templates(directory=str(templates_path))
 
 
 async def get_chat_service() -> ChatService:
@@ -28,10 +28,10 @@ async def get_chat_service() -> ChatService:
     return ChatService(llm_provider, search_strategy)
 
 
-# @router.get("/")
-# async def get_chat_interface(request: Request):
-#     """Get the chat interface template."""
-#     return templates.TemplateResponse("chat.html", {"request": request})
+@router.get("/")
+async def get_chat_interface(request: Request):
+    """Get the chat interface template."""
+    return templates.TemplateResponse("chat.html", {"request": request})
 
 
 @router.post("/ping")

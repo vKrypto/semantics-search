@@ -1,8 +1,9 @@
 from infrastructure.index_store.indexer import DataIndexer
 from management.commands.index_store import ReindexingCommand
-
+from domain.models.management import Command
 
 class RefreshEmbeddingsCommand(ReindexingCommand):
+    COMMOND_NAME = Command.REFRESH_EMBEDDINGS
 
     @classmethod
     async def execute(cls, **kwargs):

@@ -5,9 +5,11 @@ from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.management import ManagementCommondBase
 from infrastructure.index_store.indexer import DataIndexer
+from domain.models.management import Command
 
 
 class ReindexingCommand(ManagementCommondBase):
+    COMMOND_NAME = Command.REFRESH_EMBEDDINGS
     
     _index_name = AppSettings.DEFAULT_INDEX_NAME
     _index_type = AppSettings.DEFAULT_INDEX_TYPE

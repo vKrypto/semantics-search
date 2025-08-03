@@ -1,18 +1,15 @@
 from domain.interfaces.management import ManagementCommondBase
 from infrastructure.data_streams import DataStreams
 from domain.interfaces.data_streams import DataStream
-
+from domain.models.management import Command
 
 class ValidateStreams(ManagementCommondBase):
-    
+    COMMOND_NAME = Command.VALIDATE_STREAMS
+
     @classmethod
     async def execute(cls, **kwargs) -> None:
         print("Validating streams...")
         cls.validate_streams_connections()
-
-    @staticmethod
-    def get_command_name() -> str:
-        return "validate-streams"
 
     @classmethod
     def validate_streams_connections(cls) -> None:
@@ -28,6 +25,7 @@ class ValidateStreams(ManagementCommondBase):
 
 
 class ValidateStreamsData(ManagementCommondBase):
+    COMMOND_NAME = Command.VALIDATE_STREAMS_DATA
     
     @classmethod
     async def execute(cls, **kwargs) -> None:

@@ -1,5 +1,9 @@
 from typing import Any, Dict, Type
+import pkgutil
+import importlib
+import inspect
 
+# Auto-discover and register commands
 from abc import ABC
 
 from domain.interfaces.management import ManagementCommondBase
@@ -38,3 +42,12 @@ class ManagementCommandFactory(ABC):
             traceback.print_exc()
         finally:
             command.release_resources()
+
+    @classmethod
+    def auto_register_commands(cls):
+        commands = importlib.import_module("management.commands")
+        for _, module_name, _ in pkgutil.iter_modules(commands.__path__):
+            module = importlib.import_module(f"{commands.__name__}.{module_name}")
+            for _, obj in inspect.getmembers(module, inspect.isclass):
+                if hasattr(obj, "COMMOND_NAME") and issubclass(obj, ManagementCommondBase) and obj != ManagementCommondBase: 
+                    cls.register_command(obj.COMMOND_NAME.value, obj)

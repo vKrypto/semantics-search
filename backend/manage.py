@@ -22,6 +22,7 @@ class ManagementScript:
     
     def __init__(self):
         self.commands_dir = backend_path / "management" / "commands"
+        ManagementCommandFactory.auto_register_commands()
         self.discovered_commands: set[str] = ManagementCommandFactory.get_all_commands()
         self.discovered_commands.add("list")  # Add a command to list all available commands
 
