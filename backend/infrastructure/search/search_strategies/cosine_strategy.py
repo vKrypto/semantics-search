@@ -38,7 +38,7 @@ class CosineQuerySelector:
             },
             "size": self.top_k,
             "min_score": 1 + self.min_score,  # cosine range [-1, 1] → [0, 2]
-            "_source": ["title", "data"],
+            "_source": ["key", "value"],
         }
 
 
@@ -50,7 +50,6 @@ class CosineEncoder:
         norm = np.linalg.norm(vec)
         return (vec / norm).tolist() if norm > 0 else vec.tolist()
 
-    @timeit
     @classmethod
     def encode_df(cls, model: SentenceTransformer, df: DataFrame) -> DataFrame:
         """
@@ -58,8 +57,9 @@ class CosineEncoder:
         Args:
             df: The dataframe to encode
         """
+        assert model is not None, "Model must be provided for encoding"
         logger.info(f"Creating Embding for : {len(df)} entries")
-        df["title_vectors"] = df["title"].apply(lambda x: cls._normalize(model.encode(x)))  # --> [-1, 1]
+        df["key_vectors"] = df["key"].apply(lambda x: cls._normalize(model.encode(x)))  # --> [-1, 1]
         return df
 
 
@@ -115,8 +115,8 @@ class CosineSearchStrategy(SearchStrategy, CosineEncoder):
         for item in res:
             if not raw_format:
                 item = {
-                    "title": item.get("_source", {}).get("title", "No title"),
-                    "description": item.get("_source", {}).get("data", "{}").get("description", "-NA-"),
+                    "key": item.get("_source", {}).get("key", "No title"),
+                    "value": item.get("_source", {}).get("data", "{}").get("value", "-NA-"),
                     "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
                 }
             yield item

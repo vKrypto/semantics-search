@@ -29,10 +29,12 @@ class AppSettingsClass(BaseSettings):
     DEFAULT_INDEX_STORE: IndexStoreProviderType = IndexStoreProviderType.ELASTIC_DB
     ELASTIC_URL: str = "http://localhost:9200"
     DEFAULT_INDEX_NAME: str = "documents"
+    DEFAULT_INDEX_TYPE: str = "cosine_indexes"
 
     VECTOR_DB_TYPE: str = "chroma"
     # EMBEDDING_MODEL: str = "text-embedding-ada-002"
     EMBEDDING_MODEL: str = "all-mpnet-base-v2"
+    MODEL_CACHE_DIR: str = "./models_cache"
 
     class Config:
         case_sensitive = True

@@ -2,9 +2,9 @@ INDEX_MAPPINGS = {
     "euclidian_indexes": {
         "properties": {
             "id": {"type": "long"},
-            "title": {"type": "text"},
-            "data": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
-            "title_vectors": {
+            "key": {"type": "text"},
+            "value": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
+            "key_vectors": {
                 "type": "dense_vector",
                 "dims": 768,
                 "index": True,
@@ -15,9 +15,9 @@ INDEX_MAPPINGS = {
     "cosine_indexes": {
         "properties": {
             "id": {"type": "long"},
-            "title": {"type": "text"},
-            "data": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
-            "title_vectors": {
+            "key": {"type": "text"},
+            "value": {"type": "object", "properties": {"title": {"type": "text"}, "description": {"type": "text"}}},
+            "key_vectors": {
                 "type": "dense_vector",
                 "dims": 768,
                 "index": True,

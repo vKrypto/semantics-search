@@ -5,44 +5,36 @@ from sentence_transformers import SentenceTransformer
 from core.config.settings import AppSettings
 from core.logging.logger import logger
 from domain.interfaces.management import ManagementCommondBase
-from infrastructure.index_store import ElasticsearchStore
+from infrastructure.index_store.indexer import DataIndexer
 
 
-class RefreshIndexStoreCommand(ManagementCommondBase):
-
+class ReindexingCommand(ManagementCommondBase):
+    
     _index_name = AppSettings.DEFAULT_INDEX_NAME
+    _index_type = AppSettings.DEFAULT_INDEX_TYPE
     _model: Optional[SentenceTransformer] = None
+    index_param = None
+
+    # def __init__(self, index_param=None, **kwargs):
+    #     self.index_param = index_param
 
     @classmethod
-    def _initialize_resource(cls) -> None:
+    async def initialize_resources(cls) -> None:
         """Initialize the sentence transformer model if not already initialized."""
         if cls._model is None:
             logger.info(f"Initializing sentence transformer model: {AppSettings.EMBEDDING_MODEL}")
-            cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL, local_files_only=True)
+            cls._model = SentenceTransformer(AppSettings.EMBEDDING_MODEL, cache_folder=AppSettings.MODEL_CACHE_DIR, local_files_only=False)
 
-    async def execute(self, **kwargs) -> None:
-        print(f"Refreshing index store with param: {self.index_param}, extra: {kwargs}")
-        await self.re_indexing(self._model, self._index_name, refresh=True)
-
-
+    @classmethod
+    async def execute(cls, **kwargs) -> None:
+        print(f"Re-indexing with param: {cls.index_param}, extra: {kwargs}")
+        await DataIndexer.re_indexing(cls._model, cls._index_name, refresh=True)
+    
     @staticmethod
     def get_command_name() -> str:
-        return "refresh-index-store"
-
-    @staticmethod
-    def _update_index_store(index_name: str, records: list):
-        print("Storing documents in Elasticsearch: ", len(records))
-        es = ElasticsearchStore(index_name=index_name)
-        es.reset_index()
-        es.add_bulk_documents(records)
-        print(f"Re-indexing done!, total indexed documents: {es.count()}")
-
+        return "re-index-store"
+    
     @classmethod
-    async def re_indexing(cls, model, index_name: str, refresh=False):
-        obj = DFDataEncoder(model=model, index_name=index_name, refresh=refresh)
-        cls._update_index_store(index_name, obj.get_records())
-
-    @classmethod
-    def _release_resource(cls) -> None:
-        """Initialize the sentence transformer model if not already initialized."""
+    async def release_resources(cls) -> None:
+        """Release the sentence transformer model."""
         cls._model = None
