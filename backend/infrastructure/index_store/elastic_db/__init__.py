@@ -31,7 +31,7 @@ class ElasticsearchStore(IndexStoreProvider):
         return self._conn
 
     def get_es_connection(self) -> Elasticsearch:
-        es_conn = Elasticsearch(self.ELASTIC_URL, request_timeout=60, max_retries=3, retry_on_timeout=True)
+        es_conn = Elasticsearch(self.ELASTIC_URL, max_retries=3)
         try:
             info = es_conn.info()
             print("Connected to Elasticsearch:", info["version"]["number"])
@@ -66,7 +66,8 @@ class ElasticsearchStore(IndexStoreProvider):
             try:
                 caused = e.errors[0]["index"]["error"]["caused_by"]
                 print(f"Bulk insert error: {caused['type']}: {caused['reason']}")
-            except Exception as e:
+            except Exception as exc:  # noqa: E722
+                print("Bulk insert error:", str(exc))
                 pass
             print("Bulk insert error:", str(e))
         return

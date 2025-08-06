@@ -1,5 +1,5 @@
 # Core Dependencies
-elasticsearch
+elasticsearch<9.0.0
 pandas
 sentence-transformers
 pyarrow

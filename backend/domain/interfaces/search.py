@@ -10,7 +10,7 @@ from domain.models.search import SearchRequest, SearchResult
 
 
 nltk.download("stopwords", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
-nltk.download("punkt", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
+nltk.download("punkt_tab", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
 STOP_WORDS = set(stopwords.words("english"))
 
 
