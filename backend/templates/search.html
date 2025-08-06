@@ -53,7 +53,7 @@
                 `;
 
                 resultsDiv.innerHTML = data.results.map(result => {
-                    const title = result.title.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1));
+                    const title = result.key.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.slice(1));
                     const prettyData = JSON.stringify(result, null, 2);
                     return `
                         <div class="bg-white p-6 rounded-lg shadow-md mb-4 hover:shadow-lg transition-shadow">

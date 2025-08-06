@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # Mount static files
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=AppSettings.STATIC_DIR), name="static")
 
 # Include routers
 app.include_router(chat.router, prefix=AppSettings.APP_PREFIX_STR)

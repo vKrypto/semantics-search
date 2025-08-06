@@ -1,15 +1,13 @@
 from enum import Enum
 from typing import List, Optional
-from unittest.mock import DEFAULT
-
 from pydantic import BaseModel, Field
 
 
 class SearchResult(BaseModel):
     """A single search result."""
 
-    title: str = Field(..., description="The title of the document")
-    content: str = Field(..., description="The content snippet")
+    key: str = Field(..., description="The title of the document")
+    value: dict = Field(..., description="The content snippet")
     score: float = Field(..., description="The relevance score")
     metadata: Optional[dict] = Field(default=None, description="Additional metadata about the result")
 

@@ -20,8 +20,7 @@ class IndexStoreFactory:
     def create_provider(
         cls, provider_name: Optional[IndexStoreProviderType] = None, *args, **kwargs
     ) -> IndexStoreProvider:
-        if provider_name is None:
-            provider_name = AppSettings.DEFAULT_INDEX_STORE
+        provider_name = provider_name or AppSettings.DEFAULT_INDEX_STORE
         if provider_name not in cls._providers:
             raise ValueError(f"Unknown Index Store Provider: {provider_name}")
         provider_class = cls._providers[provider_name]

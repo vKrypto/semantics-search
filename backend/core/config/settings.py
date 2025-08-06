@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Optional
 
 from pydantic_settings import BaseSettings
@@ -8,7 +9,8 @@ from domain.models.index_store import IndexStoreProviderType
 
 class AppSettingsClass(BaseSettings):
     """Singleton settings class for the application."""
-
+    ROOT_PATH: str = str(Path(__file__).parent.parent.parent)
+    STATIC_DIR: str = str(Path(ROOT_PATH).joinpath("static"))
     # API Settings
     VERSION_STR: str = "/v1"
     APP_PREFIX_STR: str = "/app"
@@ -34,7 +36,7 @@ class AppSettingsClass(BaseSettings):
     VECTOR_DB_TYPE: str = "chroma"
     # EMBEDDING_MODEL: str = "text-embedding-ada-002"
     EMBEDDING_MODEL: str = "all-mpnet-base-v2"
-    MODEL_CACHE_DIR: str = "./models_cache"
+    MODEL_CACHE_DIR: str = str(Path(ROOT_PATH).joinpath("models_cache"))
 
     class Config:
         case_sensitive = True

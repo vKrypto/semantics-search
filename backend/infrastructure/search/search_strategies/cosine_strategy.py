@@ -1,4 +1,5 @@
 import abc
+import json
 from typing import AsyncGenerator, Generator, Iterable, List, Optional, Type
 
 import numpy as np
@@ -21,7 +22,7 @@ class QuerySelector(abc.ABC):
 
 
 class CosineQuerySelector:
-    def __init__(self, vector_field: str = "search_vectors", top_k: int = 5, min_score: float = 0.30) -> None:
+    def __init__(self, vector_field: str = "key_vectors", top_k: int = 5, min_score: float = 0.30) -> None:
         self.top_k = top_k
         self.min_score = min_score
         self.vector_field = vector_field
@@ -38,7 +39,7 @@ class CosineQuerySelector:
                 }
             },
             "size": self.top_k,
-            "min_score": 1 + self.min_score,  # cosine range [-1, 1] → [0, 2]
+            "min_score": self.min_score,  # cosine range [-1, 1] → [0, 2]
             "_source": ["key", "value"],
         }
 
@@ -117,7 +118,7 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
             if not raw_format:
                 item = {
                     "key": item.get("_source", {}).get("key", "No title"),
-                    "value": item.get("_source", {}).get("data", "{}").get("value", "-NA-"),
+                    "value": item.get("_source", {}).get("value", "{}"),
                     "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
                 }
             yield item
