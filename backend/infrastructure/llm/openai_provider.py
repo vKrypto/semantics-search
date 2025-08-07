@@ -39,9 +39,7 @@ class OpenAIProvider(LLMProvider):
             Generated text
         """
         try:
-            response = await self.client.chat.completions.create(
-                model=self.model_name, messages=[{"role": "user", "content": prompt}], **kwargs
-            )
+            response = await self.client.chat.completions.create(model=self.model_name, messages=[{"role": "user", "content": prompt}], **kwargs)
             return response.choices[0].message.content
         except Exception as e:
             logger.error(f"Error generating text: {str(e)}")
@@ -81,14 +79,10 @@ class OpenAIProvider(LLMProvider):
             # Add conversation history
             full_messages = self._conversation_history + messages
 
-            response = await self.client.chat.completions.create(
-                model=self.model_name, messages=full_messages, **kwargs
-            )
+            response = await self.client.chat.completions.create(model=self.model_name, messages=full_messages, **kwargs)
 
             # Update conversation history
-            self._conversation_history = full_messages + [
-                {"role": "assistant", "content": response.choices[0].message.content}
-            ]
+            self._conversation_history = full_messages + [{"role": "assistant", "content": response.choices[0].message.content}]
 
             return response.choices[0].message.content
         except Exception as e:

@@ -3,6 +3,7 @@ from infrastructure.data_streams import DataStreams
 from domain.interfaces.data_streams import DataStream
 from domain.models.management import Command
 
+
 class ValidateStreams(ManagementCommondBase):
     COMMOND_NAME = Command.VALIDATE_STREAMS
 
@@ -26,7 +27,7 @@ class ValidateStreams(ManagementCommondBase):
 
 class ValidateStreamsData(ManagementCommondBase):
     COMMOND_NAME = Command.VALIDATE_STREAMS_DATA
-    
+
     @classmethod
     async def execute(cls, **kwargs) -> None:
         print("Validating streams data...")
@@ -35,7 +36,7 @@ class ValidateStreamsData(ManagementCommondBase):
     @staticmethod
     def get_command_name() -> str:
         return "validate-streams-data"
-    
+
     @classmethod
     def validate_streams_data(cls) -> None:
         """Validate the data in all streams."""
@@ -67,5 +68,5 @@ class ValidateStreamsData(ManagementCommondBase):
                 print(f"Data stream {source_index}:{data_source_cls} is empty.")
             except Exception as e:
                 print(f"Error validating data stream {source_index}:{data_source_cls}: {e}")
-            
+
             print(f"Data stream {source_index}:{data_source_cls} has {valid_count} valid data.")

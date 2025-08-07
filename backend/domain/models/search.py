@@ -24,9 +24,7 @@ class SearchRequest(BaseModel):
     """A search request from the user."""
 
     query: str = Field(..., description="The search query")
-    search_type: StrategyType = Field(
-        default=StrategyType.DEFAULT, description="Type of search to perform (hybrid/cosine/euclidean)"
-    )
+    search_type: StrategyType = Field(default=StrategyType.DEFAULT, description="Type of search to perform (hybrid/cosine/euclidean)")
     limit: int = Field(default=5, description="Maximum number of results to return")
 
 

@@ -8,4 +8,3 @@
 #     @classmethod
 #     async def execute(cls, **kwargs):
 #         DataIndexer.refresh_index_store(cls._model, index_name=cls._index_name, index_type=cls._index_type, refresh=True)
- 

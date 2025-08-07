@@ -12,9 +12,7 @@ from domain.models.search import SearchRequest, SearchResult
 class ANNSearchStrategy(SearchStrategy):
     """Search strategy using Approximate Nearest Neighbors."""
 
-    def __init__(
-        self, model: SentenceTransformer, index_name: str = "documents", top_k: int = 5, num_candidates: int = 100
-    ):
+    def __init__(self, model: SentenceTransformer, index_name: str = "documents", top_k: int = 5, num_candidates: int = 100):
         """Initialize the ANN search strategy.
 
         Args:

@@ -10,7 +10,7 @@ from domain.models.management import Command
 
 class ReindexingCommand(ManagementCommondBase):
     COMMOND_NAME = Command.REFRESH_EMBEDDINGS
-    
+
     _index_name = AppSettings.DEFAULT_INDEX_NAME
     _index_type = AppSettings.DEFAULT_INDEX_TYPE
     _model: Optional[SentenceTransformer] = None
@@ -30,11 +30,11 @@ class ReindexingCommand(ManagementCommondBase):
     async def execute(cls, **kwargs) -> None:
         print(f"Re-indexing with param: {cls.index_param}, extra: {kwargs}")
         DataIndexer.re_indexing(cls._model, cls._index_name, refresh=True)
-    
+
     @staticmethod
     def get_command_name() -> str:
         return "re-index-store"
-    
+
     @classmethod
     async def release_resources(cls) -> None:
         """Release the sentence transformer model."""
@@ -47,4 +47,3 @@ class RefreshEmbeddingsCommand(ReindexingCommand):
     @classmethod
     async def execute(cls, **kwargs):
         DataIndexer.refresh_index_store(cls._model, index_name=cls._index_name, index_type=cls._index_type, refresh=False)
- 

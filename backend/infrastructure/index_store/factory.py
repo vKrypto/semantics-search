@@ -17,9 +17,7 @@ class IndexStoreFactory:
         logger.info(f"Registered Index Store Provider: {name}")
 
     @classmethod
-    def create_provider(
-        cls, provider_name: Optional[IndexStoreProviderType] = None, *args, **kwargs
-    ) -> IndexStoreProvider:
+    def create_provider(cls, provider_name: Optional[IndexStoreProviderType] = None, *args, **kwargs) -> IndexStoreProvider:
         provider_name = provider_name or AppSettings.DEFAULT_INDEX_STORE
         if provider_name not in cls._providers:
             raise ValueError(f"Unknown Index Store Provider: {provider_name}")

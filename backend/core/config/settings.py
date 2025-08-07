@@ -9,6 +9,7 @@ from domain.models.index_store import IndexStoreProviderType
 
 class AppSettingsClass(BaseSettings):
     """Singleton settings class for the application."""
+
     ROOT_PATH: str = str(Path(__file__).parent.parent.parent)
     STATIC_DIR: str = str(Path(ROOT_PATH).joinpath("static"))
     # API Settings

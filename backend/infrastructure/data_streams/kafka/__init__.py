@@ -18,4 +18,3 @@ class KafkaData(DataStream):
 
     def __iter__(self):
         return self
-

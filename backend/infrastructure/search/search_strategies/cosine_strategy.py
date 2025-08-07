@@ -1,5 +1,4 @@
 import abc
-import json
 from typing import AsyncGenerator, Generator, Iterable, List, Optional, Type
 
 import numpy as np
@@ -92,8 +91,8 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
             res = self._es_connector.conn.search(index=self.index_name, body=self._qs.search_query(query_vector))
             return iter(res["hits"]["hits"])
         except Exception as e:
-            print(f"[Error] Query failed: {e}")
-            return iter([])
+            logger.error(f"[Error] Query failed: {e}")
+            raise
 
     def _cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
         """Calculate cosine similarity between two vectors."""

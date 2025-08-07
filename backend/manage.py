@@ -19,7 +19,7 @@ from management.factory import ManagementCommandFactory
 
 class ManagementScript:
     """Main management script class."""
-    
+
     def __init__(self):
         self.commands_dir = backend_path / "management" / "commands"
         ManagementCommandFactory.auto_register_commands()
@@ -37,34 +37,31 @@ class ManagementScript:
         if not self.discovered_commands:
             print("No commands discovered.")
             return
-            
+
         print("Available commands:")
         for command_name in self.discovered_commands:
             print(f"  python manage.py {command_name}")
-            
+
     def execute_command(self, command_name: str, args: list = None, kwargs: Dict[str, Any] = None):
         args = args or []
         kwargs = kwargs or {}
         asyncio.run(ManagementCommandFactory.execute_command(command_name, *args, **kwargs))
-        
+
 
 def main():
     """Main entry point."""
     mgmt = ManagementScript()
 
     parser = argparse.ArgumentParser(
-        description="Semantics Search Management Script",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=mgmt.help()
+        description="Semantics Search Management Script", formatter_class=argparse.RawDescriptionHelpFormatter, epilog=mgmt.help()
     )
-    
-    parser.add_argument('command', nargs='?', help='Command to execute')
-    parser.add_argument('args', nargs=argparse.REMAINDER, help='Command arguments')
-    parser.add_argument('kwargs', nargs=argparse.REMAINDER, help='Command keyword arguments')
+
+    parser.add_argument("command", nargs="?", help="Command to execute")
+    parser.add_argument("args", nargs=argparse.REMAINDER, help="Command arguments")
+    parser.add_argument("kwargs", nargs=argparse.REMAINDER, help="Command keyword arguments")
     args = parser.parse_args()
 
-
-    if args.command == 'list':
+    if args.command == "list":
         mgmt.list()
     elif args.command not in mgmt.discovered_commands:
         print(f"Unknown command: {args.command}")
@@ -73,5 +70,5 @@ def main():
         mgmt.execute_command(args.command, args.args)
 
 
-if __name__ == '__main__':
-    main() 
+if __name__ == "__main__":
+    main()

@@ -40,7 +40,7 @@ class EncodedDFLoader:
 
     @timeit
     def _create_dump(self):
-        for col in ['value']:
+        for col in ["value"]:
             if self.df[col].apply(lambda x: isinstance(x, dict)).any():
                 self.df[col] = self.df[col].apply(lambda x: json.dumps(x) if isinstance(x, dict) else x)
         self.df.to_parquet(self.dump_file_name, compression="brotli")
@@ -54,12 +54,12 @@ class EncodedDFLoader:
 class DataIndexer:
 
     @classmethod
-    def refresh_index_store(cls, model, index_name: str = None, index_type:str = None, refresh:bool=False) -> None:
+    def refresh_index_store(cls, model, index_name: str = None, index_type: str = None, refresh: bool = False) -> None:
         # getting encoded embedding records
         if refresh:
             print("Refreshing index store")
         records = cls.re_indexing(model, index_name=index_name, refresh=refresh)
-        
+
         # reset index and add documents
         print("Refreshing documents in Elasticsearch: ", len(records))
         es = ElasticsearchStore(index_name=index_name, index_type=index_type)
@@ -69,6 +69,6 @@ class DataIndexer:
 
     @staticmethod
     @timeit
-    def re_indexing(model, index_name: str, refresh:bool=False) -> None:
+    def re_indexing(model, index_name: str, refresh: bool = False) -> None:
         obj = EncodedDFLoader(model=model, index_name=index_name, refresh=refresh)
         return obj.get_records()

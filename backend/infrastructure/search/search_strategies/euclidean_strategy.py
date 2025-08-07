@@ -12,9 +12,7 @@ from domain.models.search import SearchRequest, SearchResult
 class EuclideanSearchStrategy(SearchStrategy):
     """Search strategy using euclidean distance."""
 
-    def __init__(
-        self, model: SentenceTransformer, index_name: str = "documents", top_k: int = 5, max_distance: float = 2.0
-    ):
+    def __init__(self, model: SentenceTransformer, index_name: str = "documents", top_k: int = 5, max_distance: float = 2.0):
         """Initialize the euclidean search strategy.
 
         Args:

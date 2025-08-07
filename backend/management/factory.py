@@ -12,7 +12,7 @@ from domain.models.management import Command
 
 class ManagementCommandFactory(ABC):
     _commands: Dict[Type[Command], Type[ManagementCommondBase]] = {}
-    
+
     @classmethod
     def get_all_commands(cls) -> set[str]:
         return set(cls._commands.keys())
@@ -39,6 +39,7 @@ class ManagementCommandFactory(ABC):
         except Exception as e:
             print(f"Error executing command {command_name}: {e}")
             import traceback
+
             traceback.print_exc()
         finally:
             await command.release_resources()
@@ -49,5 +50,5 @@ class ManagementCommandFactory(ABC):
         for _, module_name, _ in pkgutil.iter_modules(commands.__path__):
             module = importlib.import_module(f"{commands.__name__}.{module_name}")
             for _, obj in inspect.getmembers(module, inspect.isclass):
-                if hasattr(obj, "COMMOND_NAME") and issubclass(obj, ManagementCommondBase) and obj != ManagementCommondBase: 
+                if hasattr(obj, "COMMOND_NAME") and issubclass(obj, ManagementCommondBase) and obj != ManagementCommondBase:
                     cls.register_command(obj.COMMOND_NAME.value, obj)
