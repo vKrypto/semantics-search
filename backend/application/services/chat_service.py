@@ -52,7 +52,7 @@ class ChatService:
 
         return ChatResponse(
             response=response,
-            context=[result.content for result in search_results],
+            # context=[search_results[result] for result in search_results], --need to ask
             server_time=total_time,
             context_creation_time=context_time,
         )

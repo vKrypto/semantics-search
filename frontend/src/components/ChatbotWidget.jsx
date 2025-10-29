@@ -21,12 +21,16 @@ const MarkdownMessage = ({ text }) => {
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
+// Use Vite env var VITE_API_BASE_URL; fallback to localhost
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const CHAT_ENDPOINT = `${API_BASE}/app/v1/chat/`;
+
 const ChatbotWidget = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const messageEndRef = useRef(null);
 
-   useEffect(() => {
+  useEffect(() => {
     setMessages([{ from: "bot", text: "Hi, how can I help you?" }]);
   }, []);
 
@@ -38,12 +42,14 @@ const ChatbotWidget = () => {
     setInput("");
 
     try {
-      const res = await axios.post("/app/v1/chat/", {
+      const res = await axios.post(CHAT_ENDPOINT, {
         query: userMsg,
       });
       setMessages((prev) => [...prev, { from: "bot", text: res.data.response }]);
     } catch (err) {
-      setMessages((prev) => [...prev, { from: "bot", text: "Error: No response" }]);
+      console.error('Chat request failed:', err);
+      const errText = err?.response?.data?.detail || err?.message || 'Error: No response';
+      setMessages((prev) => [...prev, { from: "bot", text: `Error: ${errText}` }]);
     }
   };
 

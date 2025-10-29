@@ -1,5 +1,5 @@
 import abc
-from typing import AsyncGenerator, Generator, Iterable, List, Optional, Type
+from typing import AsyncGenerator, Iterable, List, Optional, Type
 
 import numpy as np
 from pandas import DataFrame
@@ -104,12 +104,13 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
             return -1
         return float(np.dot(vec1, vec2) / (norm1 * norm2))
 
-    async def search(self, query: str, raw_format: bool = False) -> AsyncGenerator[Generator[SearchResult]]:
+    async def search(self, query: str, raw_format: bool = False) -> List[SearchResult]: # need to ask
         """Perform a cosine similarity search.
         Returns:
             List of search results
         """
         query = self.clean_and_remove_stop_words(query)
+        results = []
         # Encode query and create vector
         query_vector = self._normalize(self.model.encode(query.lower()))
         res = self.search_query_vector(query_vector)
@@ -120,7 +121,8 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
                     "value": item.get("_source", {}).get("value", "{}"),
                     "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
                 }
-            yield item
+            results.append(item)
+        return results
 
     def get_strategy_name(self) -> Type[StrategyType]:
         return StrategyType.COSINE
