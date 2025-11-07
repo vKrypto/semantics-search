@@ -104,7 +104,7 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
             return -1
         return float(np.dot(vec1, vec2) / (norm1 * norm2))
 
-    async def search(self, query: str, raw_format: bool = False) -> AsyncGenerator[SearchResult, None]: # need to ask
+    async def search(self, query: str, raw_format: bool = False) -> AsyncGenerator[SearchResult, None]:
         """Perform a cosine similarity search.
         Returns:
             List of search results
