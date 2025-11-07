@@ -122,7 +122,6 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
                     "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
                 }
             yield item
-        # return results
 
     def get_strategy_name(self) -> Type[StrategyType]:
         return StrategyType.COSINE

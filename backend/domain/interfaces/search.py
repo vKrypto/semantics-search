@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 from pandas import DataFrame
 from core.config.settings import AppSettings
 from domain.models.search import SearchRequest, SearchResult
-from typing import Generator, AsyncGenerator
+from typing import AsyncGenerator
 
 
 nltk.download("stopwords", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
