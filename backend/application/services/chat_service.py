@@ -34,7 +34,7 @@ class ChatService:
 
         # Get context using search
         context_start = time.time()
-        search_results = await self.search_strategy.search(request.query)
+        search_results = [item async for item in self.search_strategy.search(request.query)]
         context_time = (time.time() - context_start) * 1000
 
         # Generate response using LLM
@@ -49,10 +49,11 @@ class ChatService:
         total_time = (time.time() - start_time) * 1000
 
         logger.info(f"Processed chat request in {total_time:.2f}ms")
+        context = [item["value"]["value"] if isinstance(item["value"], dict) else item["value"] for item in search_results]
 
         return ChatResponse(
             response=response,
-            # context=[search_results[result] for result in search_results], --need to ask
+            context=context,
             server_time=total_time,
             context_creation_time=context_time,
         )

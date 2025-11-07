@@ -104,7 +104,7 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
             return -1
         return float(np.dot(vec1, vec2) / (norm1 * norm2))
 
-    async def search(self, query: str, raw_format: bool = False) -> List[SearchResult]: # need to ask
+    async def search(self, query: str, raw_format: bool = False) -> AsyncGenerator[SearchResult, None]: # need to ask
         """Perform a cosine similarity search.
         Returns:
             List of search results
@@ -121,8 +121,8 @@ class CosineSearchStrategy(CosineEncoder, SearchStrategy):
                     "value": item.get("_source", {}).get("value", "{}"),
                     "score": round(item.get("_score", 0) - 1, 2),  # converting to --> [-1, 1] scale again
                 }
-            results.append(item)
-        return results
+            yield item
+        # return results
 
     def get_strategy_name(self) -> Type[StrategyType]:
         return StrategyType.COSINE

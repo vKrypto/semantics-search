@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import List, AsyncGenerator
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -55,7 +55,7 @@ class ANNSearchStrategy(SearchStrategy):
             "_source": ["title", "content", "title_vectors"],
         }
 
-    async def search(self, request: SearchRequest) -> List[SearchResult]:
+    async def search(self, request: SearchRequest) -> AsyncGenerator[SearchResult, None]:
         """Perform an ANN search.
 
         Args:
