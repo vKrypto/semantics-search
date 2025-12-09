@@ -19,6 +19,11 @@ class OpenAIProvider(LLMProvider):
             model_name: The OpenAI model to use
             session_id: Optional session ID for conversation history
         """
+
+        #TODO: Need to hold the object for each session id
+        # Conversation history can be stored in a more persistent way if needed
+        # Object is getting created again and again for each request
+        
         if not AppSettings.OPENAI_APIKEY:
             raise EnvironmentError("OPENAI_APIKEY not found in environment variables")
 

@@ -7,6 +7,7 @@ from nltk.tokenize import word_tokenize
 from pandas import DataFrame
 from core.config.settings import AppSettings
 from domain.models.search import SearchRequest, SearchResult
+from typing import AsyncGenerator
 
 
 nltk.download("stopwords", download_dir=AppSettings.MODEL_CACHE_DIR, quiet=True)
@@ -18,7 +19,7 @@ class SearchStrategy(ABC):
     """Abstract base class for search strategies."""
 
     @abstractmethod
-    async def search(self, request: SearchRequest) -> List[SearchResult]:
+    async def search(self, request: SearchRequest) -> AsyncGenerator[SearchResult, None]:
         """Perform a search using the strategy.
 
         Args:
