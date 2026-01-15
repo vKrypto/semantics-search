@@ -4,10 +4,14 @@ import asyncio
 from typing import Dict, List, Optional
 
 import cohere
-from typing import Any
 
 from core.config.settings import AppSettings
 from core.logging.logger import logger
+from core.utils.conversation_history import (
+    load_conversation_history,
+    save_conversation_history,
+    merge_with_history,
+)
 from domain.interfaces.llm import LLMProvider
 import httpx
 import json
@@ -53,8 +57,10 @@ class CohereProvider(LLMProvider):
             raise EnvironmentError(f"Failed to initialize Cohere ClientV2: {e}")
 
         self.session_id = session_id or str(uuid.uuid4())
-        self._conversation_history: List[Dict[str, str]] = []
-        logger.info(f"Initialized Cohere provider with model: {model_name}")
+        self._conversation_history: List[Dict[str, str]] = load_conversation_history(
+            "cohere", self.session_id
+        )
+        logger.info(f"Initialized Cohere provider with model: {model_name}, session_id: {self.session_id}")
 
     async def generate_text(self, prompt: str, **kwargs) -> str:
         """Generate text from the Cohere model.
@@ -100,24 +106,21 @@ class CohereProvider(LLMProvider):
     async def chat(self, messages: List[Dict[str, str]], **kwargs) -> str:
         """Chat with the Cohere model using a list of messages.
 
-        This method attempts to follow the same message-style interface as other
-        providers: a list of dicts with 'role' and 'content'. Cohere's SDK may
-        expose a dedicated chat API; if not available, we map the message list
-        into a single prompt and call ``generate``.
+        This method follows the same message-style interface as other providers:
+        a list of dicts with 'role' and 'content'. Conversation history is loaded
+        from Redis, merged with incoming messages, and saved back after the response.
 
         Args:
             messages: List of message dictionaries with role and content
-            **kwargs: Additional args passed to Cohere's generate/chat call
+            **kwargs: Additional args passed to Cohere's chat call
 
         Returns:
             The model's response text
         """
         try:
-            # Ensure a system message
-            if not any(msg["role"] == "system" for msg in messages):
-                messages.insert(0, {"role": "system", "content": "You are a helpful AI assistant."})
-
-            full_messages = self._conversation_history + messages
+            # Reload persisted history each request (provider objects are created per request today)
+            persisted = load_conversation_history("cohere", self.session_id)
+            full_messages = merge_with_history(persisted, messages)
 
             # Use Cohere v2 chat API exclusively
             def _call_chat_v2():
@@ -126,26 +129,14 @@ class CohereProvider(LLMProvider):
             resp = await asyncio.to_thread(_call_chat_v2)
 
             # Parse response according to Cohere v2 chat docs: resp.message.content is a list
-            text = None
-            # msg = getattr(resp, "message", None)
-            # if isinstance(msg, dict):
-            #     content = msg.get("content")
-            # else:
-            #     content = getattr(msg, "content", None) if msg is not None else None
+            assistant_text = resp.message.content[0].text
 
-            # Update conversation history
-            self._conversation_history = full_messages + [{"role": "assistant", "content": resp.message.content[0].text}]
-                    
+            # Update conversation history and save to Redis
+            updated_history = full_messages + [{"role": "assistant", "content": assistant_text}]
+            self._conversation_history = updated_history
+            save_conversation_history("cohere", self.session_id, updated_history)
 
-            # if text is None and isinstance(msg, str):
-            #     text = msg
-
-            # if text is None:
-            #     raise RuntimeError("Unable to parse Cohere v2 chat response; expected resp.message.content")
-
-            # Update conversation history and return
-            # self._conversation_history = full_messages + [{"role": "assistant", "content": text}]
-            return resp.message.content[0].text
+            return assistant_text
         except Exception as e:
             logger.error(f"Error in Cohere chat: {str(e)}")
             raise
@@ -153,13 +144,19 @@ class CohereProvider(LLMProvider):
     async def stream_chat(self, messages: List[Dict[str, str]], **kwargs):
         """Stream chat responses from Cohere v2 chat endpoint using SSE.
 
-        Yields partial text chunks as strings.
-        """
-        # Ensure system message
-        if not any(msg["role"] == "system" for msg in messages):
-            messages.insert(0, {"role": "system", "content": "You are a helpful AI assistant."})
+        Yields partial text chunks as strings. Conversation history is loaded from
+        Redis and saved back after streaming completes.
 
-        full_messages = self._conversation_history + messages
+        Args:
+            messages: List of message dictionaries with role and content
+            **kwargs: Additional args passed to Cohere's chat call
+
+        Yields:
+            Partial text chunks from the streaming response
+        """
+        # Reload persisted history for streaming
+        persisted = load_conversation_history("cohere", self.session_id)
+        full_messages = merge_with_history(persisted, messages)
 
         url = "https://api.cohere.com/v2/chat"
         headers = {
@@ -170,6 +167,9 @@ class CohereProvider(LLMProvider):
         payload = {"model": self.model_name, "messages": full_messages, "stream": True}
         # Merge additional kwargs into payload (allow overriding)
         payload.update(kwargs)
+
+        # Accumulate full response text for saving to Redis
+        full_response_text = ""
 
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream("POST", url, headers=headers, json=payload) as resp:
@@ -187,6 +187,10 @@ class CohereProvider(LLMProvider):
                             if line.startswith("data:"):
                                 data = line[len("data:"):].strip()
                                 if data == "[DONE]":
+                                    # Save conversation history after streaming completes
+                                    updated_history = full_messages + [{"role": "assistant", "content": full_response_text}]
+                                    self._conversation_history = updated_history
+                                    save_conversation_history("cohere", self.session_id, updated_history)
                                     return
                                 try:
                                     obj = json.loads(data)
@@ -199,12 +203,21 @@ class CohereProvider(LLMProvider):
                                                 if isinstance(part, dict) and part.get("type") == "text":
                                                     chunk_text = part.get("text")
                                                     if chunk_text:
+                                                        full_response_text += chunk_text
                                                         yield chunk_text
                                                 elif isinstance(part, str):
+                                                    full_response_text += part
                                                     yield part
                                 except Exception:
                                     # non-json data; yield raw
+                                    full_response_text += data
                                     yield data
+                
+                # Save conversation history if streaming completed normally
+                if full_response_text:
+                    updated_history = full_messages + [{"role": "assistant", "content": full_response_text}]
+                    self._conversation_history = updated_history
+                    save_conversation_history("cohere", self.session_id, updated_history)
 
     def get_model_info(self) -> Dict[str, str]:
         """Get information about the configured model and session.
