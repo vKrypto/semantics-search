@@ -27,7 +27,7 @@ class AppSettingsClass(BaseSettings):
     OPENAI_APIKEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
     COHERE_API_KEY: Optional[str] = None
-    DEFAULT_LLM_PROVIDER: str = "cohere"
+    DEFAULT_LLM_PROVIDER: str = "openai"
 
     # Redis Settings (used for session + conversation history)
     REDIS_URL: str = "redis://localhost:6379/0"
