@@ -1,4 +1,4 @@
-from typing import Dict, Type
+from typing import Dict, Type, Optional
 
 from core.config.settings import AppSettings
 from core.logging.logger import logger
@@ -17,7 +17,7 @@ class LLMFactory:
         logger.info(f"Registered LLM provider: {name}")
 
     @classmethod
-    def create_provider(cls, provider_name: str = None) -> LLMProvider:
+    def create_provider(cls, provider_name: str = None, session_id: Optional[str] = None) -> LLMProvider:
         """Create an LLM provider instance."""
         provider_name = provider_name or AppSettings.DEFAULT_LLM_PROVIDER
 
@@ -26,7 +26,7 @@ class LLMFactory:
 
         provider_class = cls._providers[provider_name]
         logger.info(f"Creating LLM provider instance: {provider_name}")
-        return provider_class()
+        return provider_class(session_id=session_id)
 
     @classmethod
     def get_available_providers(cls) -> list[str]:

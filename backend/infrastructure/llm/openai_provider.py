@@ -1,11 +1,15 @@
-import os
 import uuid
 from typing import Dict, List, Optional
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 from core.config.settings import AppSettings
 from core.logging.logger import logger
+from core.utils.conversation_history import (
+    load_conversation_history,
+    save_conversation_history,
+    merge_with_history,
+)
 from domain.interfaces.llm import LLMProvider
 
 
@@ -20,18 +24,16 @@ class OpenAIProvider(LLMProvider):
             session_id: Optional session ID for conversation history
         """
 
-        #TODO: Need to hold the object for each session id
-        # Conversation history can be stored in a more persistent way if needed
-        # Object is getting created again and again for each request
-        
         if not AppSettings.OPENAI_APIKEY:
             raise EnvironmentError("OPENAI_APIKEY not found in environment variables")
 
         self.model_name = model_name
-        self.client = OpenAI(api_key=AppSettings.OPENAI_APIKEY)
+        self.client = AsyncOpenAI(api_key=AppSettings.OPENAI_APIKEY)
         self.session_id = session_id or str(uuid.uuid4())
-        self._conversation_history: List[Dict[str, str]] = []
-        logger.info(f"Initialized OpenAI provider with model: {model_name}")
+        self._conversation_history: List[Dict[str, str]] = load_conversation_history(
+            "openai", self.session_id
+        )
+        logger.info(f"Initialized OpenAI provider with model: {model_name}, session_id: {self.session_id}")
 
     async def generate_text(self, prompt: str, **kwargs) -> str:
         """Generate text from the LLM.
@@ -44,7 +46,11 @@ class OpenAIProvider(LLMProvider):
             Generated text
         """
         try:
-            response = await self.client.chat.completions.create(model=self.model_name, messages=[{"role": "user", "content": prompt}], **kwargs)
+            response = await self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                **kwargs,
+            )
             return response.choices[0].message.content
         except Exception as e:
             logger.error(f"Error generating text: {str(e)}")
@@ -77,19 +83,20 @@ class OpenAIProvider(LLMProvider):
             The model's response
         """
         try:
-            # Add system message if not present
-            if not any(msg["role"] == "system" for msg in messages):
-                messages.insert(0, {"role": "system", "content": "You are a helpful AI assistant."})
+            # Reload persisted history each request (provider objects are created per request today)
+            persisted = load_conversation_history("openai", self.session_id)
+            full_messages = merge_with_history(persisted, messages)
 
-            # Add conversation history
-            full_messages = self._conversation_history + messages
+            response = await self.client.chat.completions.create(
+                model=self.model_name, messages=full_messages, **kwargs
+            )
 
-            response = await self.client.chat.completions.create(model=self.model_name, messages=full_messages, **kwargs)
+            assistant_text = response.choices[0].message.content
+            updated_history = full_messages + [{"role": "assistant", "content": assistant_text}]
+            self._conversation_history = updated_history
+            save_conversation_history("openai", self.session_id, updated_history)
 
-            # Update conversation history
-            self._conversation_history = full_messages + [{"role": "assistant", "content": response.choices[0].message.content}]
-
-            return response.choices[0].message.content
+            return assistant_text
         except Exception as e:
             logger.error(f"Error in chat: {str(e)}")
             raise

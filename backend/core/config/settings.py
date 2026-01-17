@@ -26,7 +26,13 @@ class AppSettingsClass(BaseSettings):
     # LLM Settings
     OPENAI_APIKEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
+    COHERE_API_KEY: Optional[str] = None
     DEFAULT_LLM_PROVIDER: str = "openai"
+
+    # Redis Settings (used for session + conversation history)
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_CHAT_HISTORY_PREFIX: str = "llm:chat_history:"
+    REDIS_CHAT_HISTORY_TTL_SECONDS: int = 60 * 60 * 24  # 1 day
 
     # Search Settings
     DEFAULT_INDEX_STORE: IndexStoreProviderType = IndexStoreProviderType.ELASTIC_DB

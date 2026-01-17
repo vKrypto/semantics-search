@@ -47,12 +47,12 @@ class ANNSearchStrategy(SearchStrategy):
         """
         return {
             "knn": {
-                "field": "title_vectors",
+                "field": "key_vectors",
                 "query_vector": query_vector.tolist(),
                 "k": self.num_candidates,
                 "num_candidates": self.num_candidates * 2,
             },
-            "_source": ["title", "content", "title_vectors"],
+            "_source": ["key", "value", "key_vectors"],
         }
 
     async def search(self, request: SearchRequest) -> AsyncGenerator[SearchResult, None]:

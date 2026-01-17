@@ -31,6 +31,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     """A chat response to the user."""
 
+    session_id: str = Field(..., description="Chat session id to continue the conversation")
     response: str = Field(..., description="The assistant's response")
     context: Optional[List[str]] = Field(None, description="Context used to generate the response")
     server_time: float = Field(..., description="Server processing time in milliseconds")
